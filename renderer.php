@@ -190,27 +190,16 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course, $displaysection);
-//        $thissection = $modinfo->get_section_info(0);
-//        if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
-//            echo $this->start_section_list();
-//            echo $this->section_header($thissection, $course, true, $displaysection);
-//            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-//            echo $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
-//            echo $this->section_footer();
-//            echo $this->end_section_list();
-//        }
+
         // Start single-section div
         echo html_writer::start_tag('div', array('class' => 'single-section'));
 
         // The requested section page.
         $thissection = $modinfo->get_section_info($displaysection);
 
-        // Title with section navigation links.
-        $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
+        // Title 
         $sectiontitle = '';
         $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation navigationtitle'));
-        //$sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        //$sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
         // Title attributes
         $classes = 'sectionname';
         if (!$thissection->visible) {
@@ -218,9 +207,17 @@ class format_glendon_renderer extends format_section_renderer_base {
         }
         $sectionname = html_writer::tag('span', get_section_name($course, $displaysection));
         $sectiontitle .= $this->output->heading($sectionname, 3, $classes);
-
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
+
+        //Get all lables and create tabs with them (list).
+        $labels = $modinfo->get_instances_of('label');
+        $cmList = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+        echo $this->print_bootstrap3_tab_list($labels);
+        echo $this->print_bootstrap3_tab_divs($labels, $course, $displaysection);
+
+
+
 
         // Now the list of sections..
         echo $this->start_section_list();
@@ -230,9 +227,9 @@ class format_glendon_renderer extends format_section_renderer_base {
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
 
-        echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-        echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
-        echo '<a href="'. $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">Return</a>';
+//        echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+//        echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
+        echo '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">Return</a>';
         echo $this->section_footer();
         echo $this->end_section_list();
 
@@ -502,7 +499,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $html .= html_writer::start_tag('div', array('class' => $columnClass));
 
             $thisSection = ($rowStartSectionNumber + $i);
-            
+
             if ($sectionInfo = $modinfo->get_section_info($thisSection)) {
                 $html .= html_writer::start_tag('div', array('class' => 'well well-lg', 'style' => 'text-align: center'));
                 $html .= '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
@@ -546,7 +543,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      */
     protected function print_start_here($bootstrapVersion, $course) {
         global $CFG, $PAGE;
-        
+
         $modinfo = get_fast_modinfo($course);
 
         $sectionInfo = $modinfo->get_section_info(0);
@@ -580,12 +577,12 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @return string
      */
     protected function print_bootstrap3_collapse($sectionName, $summary, $modListing, $collapsed) {
-        
+
         $in = 'in';
-        if($collapsed == 1) {
+        if ($collapsed == 1) {
             $in = '';
         }
-         
+
         $html = '<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">';
         $html .= '  <div class="panel panel-success">';
         $html .= '    <div class="panel-heading" role="tab" id="headingOne">';
@@ -619,12 +616,12 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @return string
      */
     protected function print_bootstrap2_collapse($sectionName, $summary, $modListing, $collapsed) {
-        
+
         $in = 'in';
-        if($collapsed == 1) {
+        if ($collapsed == 1) {
             $in = '';
         }
-        
+
         $html = '<div class="accordion" id="accordion2">';
         $html .= '  <div class="accordion-group">';
         $html .= '    <div class="accordion-heading">';
@@ -632,7 +629,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= '        ' . $sectionName;
         $html .= '      </a>';
         $html .= '    </div>';
-        $html .= '    <div id="collapseOne" class="accordion-body collapse '. $in . '">';
+        $html .= '    <div id="collapseOne" class="accordion-body collapse ' . $in . '">';
         $html .= '      <div class="accordion-inner">';
         $html .= '        <div class="well">';
         $html .= '          ' . $summary;
@@ -645,7 +642,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         return $html;
     }
-    
+
     protected function get_bootstrap3_botton_style() {
         $styles = array(
             'btn-success' => 'btn-success',
@@ -653,8 +650,66 @@ class format_glendon_renderer extends format_section_renderer_base {
             'btn-default' => 'btn-default',
             'btn-danger' => 'btn-danger',
         );
-        
+
         return array_rand($styles);
+    }
+
+    protected function print_bootstrap3_tab_list($labels) {
+
+        $html = '<div>';
+        $html .= ' <!-- Nav tabs --> ';
+        $html .= '  <ul class="nav nav-tabs" role="tablist"> ';
+        $i = 1;
+        
+        foreach ($labels as $l) {
+            if ($i == 1) {
+                $class = 'class="active"';
+            } else {
+                $class = '';
+            }
+            $html .= '    <li role="presentation" ' . $class . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $i . ' ' . $l->get_formatted_name() . '</a></li> ';
+            $i++;
+        }
+        $html .= '  </ul> ';
+        $html .= ' ';
+        
+        return $html;
+    }
+    
+    protected function print_bootstrap3_tab_divs($labels, $course, $displaysection) {
+
+        $html = ' <!-- Tab panes --> ';
+        $html .= '  <div class="tab-content"> ';
+        $i = 1;
+        $modinfo = get_fast_modinfo($course->id);
+        $sectionInfo = $modinfo->get_section_info($displaysection);
+        $section = convert_to_array($sectionInfo->getIterator());
+        $courseInfo = convert_to_array(get_course_and_cm_from_cmid(10));
+        print_object($courseInfo);
+        foreach ($courseInfo as $ci) {
+            
+        }
+        
+        //print_object($section);
+//        foreach ($sectionInfo as $si) {
+//            print_object($si->get);
+//            print_object($si->get_icon_url());
+//            print_object($si->get_formatted_name());
+//        }
+        
+        foreach ($labels as $l) {
+            if ($i == 1) {
+                $class = 'active';
+            } else {
+                $class = '';
+            }
+            $html .= '    <div role="tabpanel" class="tab-pane ' . $class . '" id="tab' . $i . '">Tab-' . $i .  '</div> ';
+            $i++;
+        }
+        $html .= '  </div> ';
+        $html .= '</div>';
+        
+        return $html;
     }
 
 }
