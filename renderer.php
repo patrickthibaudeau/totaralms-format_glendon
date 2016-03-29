@@ -660,7 +660,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= ' <!-- Nav tabs --> ';
         $html .= '  <ul class="nav nav-tabs" role="tablist"> ';
         $i = 1;
-        
+
         foreach ($labels as $l) {
             if ($i == 1) {
                 $class = 'class="active"';
@@ -672,43 +672,83 @@ class format_glendon_renderer extends format_section_renderer_base {
         }
         $html .= '  </ul> ';
         $html .= ' ';
-        
+
         return $html;
     }
-    
-    protected function print_bootstrap3_tab_divs($labels, $course, $displaysection) {
 
-        $html = ' <!-- Tab panes --> ';
-        $html .= '  <div class="tab-content"> ';
+    /**
+     * 
+     * @global moodle_database $DB
+     * @param type $labels
+     * @param type $course
+     * @param type $displaysection
+     * @return string
+     */
+    protected function print_bootstrap3_tab_divs($labels, $course, $displaysection) {
+        global $CFG, $DB, $OUTPUT;
+        include_once($CFG->dirroot . '/question/editlib.php');
         $i = 1;
         $modinfo = get_fast_modinfo($course->id);
         $sectionInfo = $modinfo->get_section_info($displaysection);
         $section = convert_to_array($sectionInfo->getIterator());
         $courseInfo = convert_to_array(get_course_and_cm_from_cmid(10));
-        print_object($courseInfo);
-        foreach ($courseInfo as $ci) {
-            
+        $courseModules = explode(',', $section['sequence']);
+        $labelModule = $DB->get_record('modules', array('name' => 'label'));
+
+        $i = 0;
+
+        $courseModulesByLabel = array();
+        foreach ($courseModules as $key => $value) {
+            $thisCourseModule = $DB->get_record('course_modules', array('id' => $value));
+            if ($thisCourseModule->module == $labelModule->id) {
+                $i++;
+                $x = 0;
+                $courseModulesByLabel[$i][$x] = 'Label_' . $i;
+            } else {
+                $x++;
+                $courseModulesByLabel[$i][$x] = $thisCourseModule->id;
+            }
         }
         
-        //print_object($section);
-//        foreach ($sectionInfo as $si) {
-//            print_object($si->get);
-//            print_object($si->get_icon_url());
-//            print_object($si->get_formatted_name());
-//        }
         
+
+        $html = ' <!-- Tab panes --> ';
+        $html .= '  <div class="tab-content"> ';
+        $i = 1;
         foreach ($labels as $l) {
             if ($i == 1) {
                 $class = 'active';
             } else {
                 $class = '';
             }
-            $html .= '    <div role="tabpanel" class="tab-pane ' . $class . '" id="tab' . $i . '">Tab-' . $i .  '</div> ';
+            $html .= '    <div role="tabpanel" class="tab-pane ' . $class . '" id="tab' . $i . '">';
+            $html .= '      <div class="container-fluid">';
+            $html .= '          <div class="col-md-12" style="margin-top: 10px;">';
+            $html .= '              <ul class="list-group">';
+            //Remove first key as it doesn't hold any usable value
+            unset($courseModulesByLabel[$i][0]);
+            
+            $countCourseModulesByLabel = count($courseModulesByLabel[$i]);
+            
+            for ($z = 1; $z < $countCourseModulesByLabel + 1; $z++) {
+                $thisModule = get_module_from_cmid($courseModulesByLabel[$i][$z]);
+                //print_object($thisModule);
+                $image = '<img src="' . $CFG->wwwroot . '/mod/' . $thisModule[1]->modname . '/pix/icon.png" />';
+                $link = '<a href="' . $CFG->wwwroot . '/mod/' . $thisModule[1]->modname . '/view.php?id=' . $courseModulesByLabel[$i][$z] . '">'
+                        . $thisModule[1]->name . '</a>';
+                
+                $html .= '          <li class="list-group-item">' . $image . ' ' . $link . '</li>';
+            }
+            
+            $html .= '              </ul> ';
+            $html .= '          </div> ';
+            $html .= '      </div> ';
+            $html .= '     </div> ';
             $i++;
         }
         $html .= '  </div> ';
         $html .= '</div>';
-        
+
         return $html;
     }
 
