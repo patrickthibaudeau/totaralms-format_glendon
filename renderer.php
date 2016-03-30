@@ -690,6 +690,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $i = 1;
         $modinfo = get_fast_modinfo($course->id);
         $sectionInfo = $modinfo->get_section_info($displaysection);
+        print_object($sectionInfo);
         $section = convert_to_array($sectionInfo->getIterator());
         $courseInfo = convert_to_array(get_course_and_cm_from_cmid(10));
         $courseModules = explode(',', $section['sequence']);
