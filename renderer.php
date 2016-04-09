@@ -213,8 +213,14 @@ class format_glendon_renderer extends format_section_renderer_base {
         //Get all lables and create tabs with them (list).
         $labels = $modinfo->get_instances_of('label');
         $cmList = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-        echo $this->print_bootstrap3_tab_list($labels);
-        echo $this->print_bootstrap3_tab_divs($labels, $course, $displaysection);
+        //Only print tabs if there are labels
+        $this->get_section_modules($course, $displaysection);
+//        if (count($labels > 0)) {
+//            echo $this->print_bootstrap3_tab_list($labels);
+//            echo $this->print_bootstrap3_tab_divs($labels, $course, $displaysection);
+//        } else {
+//            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
+//        }
 
 
 
@@ -643,7 +649,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         return $html;
     }
 
-    protected function get_bootstrap3_botton_style() {
+    protected function get_bootstrap3_button_style() {
         $styles = array(
             'btn-success' => 'btn-success',
             'btn-warning' => 'btn-warning',
@@ -655,21 +661,25 @@ class format_glendon_renderer extends format_section_renderer_base {
     }
 
     protected function print_bootstrap3_tab_list($labels) {
+        global $CFG, $DB;
 
+        $i = 1;
+        $label = '';
+        foreach ($labels as $l) {
+            if (strlen($l->get_formatted_name()) < 50) {
+                if ($i == 1) {
+                    $class = 'class="active"';
+                } else {
+                    $class = '';
+                }
+                $label .= '    <li role="presentation" ' . $class . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $i . ' ' . $l->get_formatted_name() . '</a></li> ';
+            }
+            $i++;
+        }
         $html = '<div>';
         $html .= ' <!-- Nav tabs --> ';
         $html .= '  <ul class="nav nav-tabs" role="tablist"> ';
-        $i = 1;
-
-        foreach ($labels as $l) {
-            if ($i == 1) {
-                $class = 'class="active"';
-            } else {
-                $class = '';
-            }
-            $html .= '    <li role="presentation" ' . $class . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $i . ' ' . $l->get_formatted_name() . '</a></li> ';
-            $i++;
-        }
+        $html .= $label;
         $html .= '  </ul> ';
         $html .= ' ';
 
@@ -687,12 +697,10 @@ class format_glendon_renderer extends format_section_renderer_base {
     protected function print_bootstrap3_tab_divs($labels, $course, $displaysection) {
         global $CFG, $DB, $OUTPUT;
         include_once($CFG->dirroot . '/question/editlib.php');
-        $i = 1;
+        
         $modinfo = get_fast_modinfo($course->id);
         $sectionInfo = $modinfo->get_section_info($displaysection);
-        print_object($sectionInfo);
         $section = convert_to_array($sectionInfo->getIterator());
-        $courseInfo = convert_to_array(get_course_and_cm_from_cmid(10));
         $courseModules = explode(',', $section['sequence']);
         $labelModule = $DB->get_record('modules', array('name' => 'label'));
 
@@ -710,8 +718,8 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $courseModulesByLabel[$i][$x] = $thisCourseModule->id;
             }
         }
-        
-        
+
+
 
         $html = ' <!-- Tab panes --> ';
         $html .= '  <div class="tab-content"> ';
@@ -728,19 +736,19 @@ class format_glendon_renderer extends format_section_renderer_base {
             $html .= '              <ul class="list-group">';
             //Remove first key as it doesn't hold any usable value
             unset($courseModulesByLabel[$i][0]);
-            
+
             $countCourseModulesByLabel = count($courseModulesByLabel[$i]);
-            
+
             for ($z = 1; $z < $countCourseModulesByLabel + 1; $z++) {
                 $thisModule = get_module_from_cmid($courseModulesByLabel[$i][$z]);
                 //print_object($thisModule);
                 $image = '<img src="' . $CFG->wwwroot . '/mod/' . $thisModule[1]->modname . '/pix/icon.png" />';
                 $link = '<a href="' . $CFG->wwwroot . '/mod/' . $thisModule[1]->modname . '/view.php?id=' . $courseModulesByLabel[$i][$z] . '">'
                         . $thisModule[1]->name . '</a>';
-                
+
                 $html .= '          <li class="list-group-item">' . $image . ' ' . $link . '</li>';
             }
-            
+
             $html .= '              </ul> ';
             $html .= '          </div> ';
             $html .= '      </div> ';
@@ -753,4 +761,48 @@ class format_glendon_renderer extends format_section_renderer_base {
         return $html;
     }
 
+    /**
+     * This function returns an array of cmids containing the top level label and all
+     * modules underneath that label
+     * @global stdClass $CFG
+     * @global moodle_database $DB
+     * @global moodle_output $OUTPUT
+     * @param stdClass $course
+     * @param int $displaysection
+     * @return array containing
+     */
+    private function get_section_modules($course, $displaysection) {
+        global $CFG, $DB, $OUTPUT;
+        include_once($CFG->dirroot . '/question/editlib.php');
+        //Get course modules
+        $modinfo = get_fast_modinfo($course->id);
+        //Get this section info
+        $sectionInfo = $modinfo->get_section_info($displaysection);
+        //Convert sectin info into an array
+        $section = convert_to_array($sectionInfo->getIterator());
+        //get all course modules for this section in the order that they appear in the section
+        $courseModules = explode(',', $section['sequence']);
+        
+        $i = 0;
+
+        $courseModulesByLabel = array();
+        $sectionModules = array();
+        foreach ($courseModules as $key => $value) {
+            $thisModule = $modinfo->cms[$value];
+            $sectionModules[$i] = $thisModule;
+//            $thisCourseModule = $DB->get_record('course_modules', array('id' => $value));
+//            if ($thisModule->get_module_type_name() == 'Label') {
+//                print_object($thisModule->get_formatted_name());
+//                $i++;
+//                $x = 0;
+//                $courseModulesByLabel[$i][$x] = $thisCourseModule->id;
+//            } else {
+//                $x++;
+//                $courseModulesByLabel[$i][$x] = $thisCourseModule->id;
+//            }
+            $i++;
+        }
+        
+        return $courseModulesByLabel();
+    }
 }
