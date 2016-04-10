@@ -10,3 +10,6 @@
 .course-content ul.glendon li.section .left .section-handle img.icon { padding:0; vertical-align: baseline; }
 .course-content ul.glendon li.section .section_action_menu .textmenu,
 .course-content ul.glendon li.section .section_action_menu .menu-action-text { white-space: nowrap; }
+.well-glendon{
+    background-color: #456765;
+}

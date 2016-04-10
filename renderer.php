@@ -213,9 +213,12 @@ class format_glendon_renderer extends format_section_renderer_base {
         $cmList = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
         //Only print tabs if there are labels
         //$this->get_section_modules($course, $displaysection);
-//        if (count($labels > 0)) {
-        echo $this->print_bootstrap3_tab_list($course, $displaysection);
-        echo $this->print_bootstrap3_tab_divs($course, $displaysection);
+        $section = convert_to_array($sectioninfo->getIterator());
+        $courseModules = explode(',', $section['sequence']);
+        if ($courseModules != null) {
+            echo @$this->print_bootstrap3_tab_list($course, $displaysection);
+            echo @$this->print_bootstrap3_tab_divs($course, $displaysection);
+        }
 //        } else {
 //            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
 //        }
@@ -489,7 +492,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         if ($bootstrapVersion == 3) {
             $columnClass = 'col-md-' . $bootstrapColumnNumber;
-            $btnClass = 'btn btn-lg btn-warning';
+            $btnClass = 'btn btn-lg btn-link';
         } else {
             $columnClass = 'span' . $bootstrapColumnNumber;
             $btnClass = 'btn btn-large';
@@ -501,7 +504,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $thisSection = ($rowStartSectionNumber + $i);
 
             if ($sectionInfo = $modinfo->get_section_info($thisSection)) {
-                $html .= html_writer::start_tag('div', array('class' => 'well well-lg', 'style' => 'text-align: center'));
+                $html .= html_writer::start_tag('div', array('class' => 'well well-lg well-glendon', 'style' => 'text-align: center'));
                 $html .= '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
                         . ' class="' . $btnClass . '" title="' . get_section_name($course, $sectionInfo) . '">'
                         . get_section_name($course, $sectionInfo) . '</a>';
@@ -682,18 +685,21 @@ class format_glendon_renderer extends format_section_renderer_base {
         $i = 0;
 
         $label = '';
-        foreach ($courseModules as $key => $value) {
-            $thisModule = $modinfo->cms[$value];
-            if ($thisModule->get_module_type_name() == 'Label') {
-                $labelName = $thisModule->get_formatted_name();
-                //If lentgh is more than 25 Characters cut the label
-                if (strlen($labelName) >= $config->tablabel) {
-                    $labelName = substr($labelName, 0, $config->tablabel) . '...';
+        if ($courseModules[0] != null) {
+
+            foreach ($courseModules as $key => $value) {
+                $thisModule = $modinfo->cms[$value];
+                if ($thisModule->get_module_type_name() == 'Label') {
+                    $labelName = $thisModule->get_formatted_name();
+                    //If lentgh is more than 25 Characters cut the label
+                    if (strlen($labelName) >= $config->tablabel) {
+                        $labelName = substr($labelName, 0, $config->tablabel) . '...';
+                    }
+
+                    $label .= '    <li role="presentation" ' . $class . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $labelName . '</a></li> ';
+
+                    $i++;
                 }
-
-                $label .= '    <li role="presentation" ' . $class . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $labelName . '</a></li> ';
-
-                $i++;
             }
         }
         //Setup HTML
@@ -703,6 +709,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= $label;
         $html .= '  </ul> ';
         $html .= ' ';
+
+
 
         return $html;
     }
@@ -731,9 +739,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $i = 0;
         foreach ($courseModules as $key => $value) {
             $thisModule = $modinfo->cms[$value];
-            $thisModuleInfo =  $thisModule->get_course_module_record();
             if ($thisModule->get_module_type_name() == 'Label') {
-                $labels[$i] = $thisModuleInfo->id;
+                $labels[$i] = $i;
                 $i++;
             }
         }
@@ -752,19 +759,19 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $courseModulesByLabel[$i][$x] = 'Label_' . $i;
                 if (strlen($thisModule->get_formatted_name()) >= $config->tablabel) {
                     $x++;
-                    $courseModulesByLabel[$i][$x] = $thisModuleInfo->instance;
+                    $courseModulesByLabel[$i][$x] = $thisModuleInfo->id;
                 }
             } else {
                 $x++;
-                $courseModulesByLabel[$i][$x] = $thisModuleInfo->instance;
+                $courseModulesByLabel[$i][$x] = $thisModuleInfo->id;
             }
         }
-
 
 
         $html = ' <!-- Tab panes --> ';
         $html .= '  <div class="tab-content"> ';
         $i = 0;
+        $z = 1;
         foreach ($labels as $l) {
             if ($i == 0) {
                 $class = 'active';
@@ -777,28 +784,21 @@ class format_glendon_renderer extends format_section_renderer_base {
             $html .= '              <ul class="list-group">';
 
 
-            foreach ($courseModules as $key => $value) {
-                $thisModule = $modinfo->cms[$value];
-                $thisModuleInfo = $thisModule->get_course_module_record();
+            for ($x = 1; $x < count($courseModulesByLabel[$z]); $x++) {
+                $module = get_module_from_cmid($courseModulesByLabel[$z][$x]);
+                $thisModule = $modinfo->cms[$courseModulesByLabel[$z][$x]];
+//                print_object($thisModule);
 
-                if ($group == $i) {
-//                    if ((($thisModule->get_module_type_name() == 'Label') && (strlen($thisModule->get_formatted_name()) >= $config->tablabel )) || ($thisModule->get_module_type_name() != 'Label')) {
-//                        //print_object($thisModule);
-//                        if ($thisModule->get_module_type_name() == 'Label') {
-//                            $image = '';
-//                            $link = $thisModule->get_formatted_content();
-//                        } else {
-                            $image = '<img src="' . $thisModule->get_icon_url() . '" />';
-                            $link = '<a href="' . $CFG->wwwroot . '/mod/' . strtolower($thisModule->get_module_type_name()) . '/view.php?id=' . $thisModuleInfo->id . '">'
-                                    . $thisModule->get_formatted_name() . '</a>';
-//                        }
-                    }
-
-                    $html .= '          <li class="list-group-item">' . $image . ' ' . $link . '</li>';
-                    if ($thisModule->get_module_type_name() == 'Label') {
-                        $group++;
-                    }
+                if ($thisModule->get_module_type_name() == 'Label') {
+                    $image = '';
+                    $link = $thisModule->get_formatted_content();
+                } else {
+                    $image = '<img src="' . $thisModule->get_icon_url() . '" />';
+                    $link = '<a href="' . $CFG->wwwroot . '/mod/' . strtolower($thisModule->get_module_type_name()) . '/view.php?id=' . $thisModuleInfo->id . '">'
+                            . $thisModule->get_formatted_name() . '</a>';
                 }
+
+                $html .= '          <li class="list-group-item">' . $image . ' ' . $link . '</li>';
             }
 
             $html .= '              </ul> ';
@@ -806,6 +806,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $html .= '      </div> ';
             $html .= '     </div> ';
             $i++;
+            $z++;
         }
         $html .= '  </div> ';
         $html .= '</div>';
