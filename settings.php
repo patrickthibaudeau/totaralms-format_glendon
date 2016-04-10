@@ -59,4 +59,10 @@ if ($ADMIN->fulltree) {
         0 => get_string('no'),
     );
     $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
+    //Length of default label
+    $name = 'format_glendon/tablabel';
+    $title = get_string('tab_label', 'format_glendon');
+    $description = get_string('tab_label_help', 'format_glendon');
+    $default = 25;
+    $settings->add(new admin_setting_configtext($name, $title, $description, $default));
 }

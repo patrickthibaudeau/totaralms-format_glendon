@@ -224,10 +224,9 @@ class format_glendon extends format_base {
      */
     public function course_format_options($foreditform = false) {
         static $courseformatoptions = false;
+        $glendoncourseconfig = get_config('format_glendon');
         if ($courseformatoptions === false) {
             $courseconfig = get_config('moodlecourse');
-            $glendoncourseconfig = get_config('format_glendon');
-
             $courseformatoptions = array(
                 'numsections' => array(
                     'default' => $courseconfig->numsections,
@@ -251,6 +250,10 @@ class format_glendon extends format_base {
                 ),
                 'collapsed' => array(
                     'default' => $glendoncourseconfig->collapsed,
+                    'type' => PARAM_INT,
+                ),
+                'tablabel' => array(
+                    'default' => $glendoncourseconfig->tablabel,
                     'type' => PARAM_INT,
                 ),
             );
@@ -332,6 +335,15 @@ class format_glendon extends format_base {
                         )
                     ),
                     'help' => 'collapsed',
+                    'help_component' => 'format_glendon',
+                ),
+                'tablabel' => array(
+                    'label' => new lang_string('tab_label', 'format_glendon'),
+                    'element_type' => 'text',
+                    'element_attributes' => array(
+                        'value' => $glendoncourseconfig->tablabel
+                    ),
+                    'help' => 'tab_label',
                     'help_component' => 'format_glendon',
                 )
             );

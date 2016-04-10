@@ -34,6 +34,9 @@ $string['numcolumns'] = 'Number of columns';
 $string['numcolumns_help'] = 'Select the number of columns you would like per row on the course front page.';
 $string['sectionname'] = 'Topic';
 $string['start_here'] = 'Start here';
+$string['tab_label'] = 'Tab label length';
+$string['tab_label_help'] = 'The maximum length a label must have to be part of the single page tabs. If Labels are equal or greater than'
+        . ' this number, they will be shortened in the tab and also displayed uner that tab.';
 $string['pluginname'] = 'glendon format';
 $string['section0name'] = 'General';
 $string['page-course-view-glendon'] = 'Any course main page in glendon format';
