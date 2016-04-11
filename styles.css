@@ -96,3 +96,8 @@
 .format_glendon_menu_content ul ul a:hover {
   color: #79980d;
 }
+
+.format_glendon_content_span {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
