@@ -10,6 +10,89 @@
 .course-content ul.glendon li.section .left .section-handle img.icon { padding:0; vertical-align: baseline; }
 .course-content ul.glendon li.section .section_action_menu .textmenu,
 .course-content ul.glendon li.section .section_action_menu .menu-action-text { white-space: nowrap; }
-.well-glendon{
-    background-color: #456765;
+/*Used for  Glendon course format*/
+
+/* Base Styles */
+.format_glendon_menu_content,
+.format_glendon_menu_content ul,
+.format_glendon_menu_content li,
+.format_glendon_menu_content a {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+  font-weight: normal;
+  text-decoration: none;
+  line-height: 1;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+  position: relative;
+}
+.format_glendon_menu_content a {
+  line-height: 1.3;
+}
+.format_glendon_menu_content {
+  width: 100%px;
+  background: #fff;
+  
+}
+.format_glendon_menu_content > ul > li {
+  margin: 0 0 2px 0;
+}
+.format_glendon_menu_content > ul > li:last-child {
+  margin: 0;
+}
+.format_glendon_menu_content > ul > li > a {
+  font-size: 15px;
+  display: block;
+  color: #ffffff;
+  /*text-shadow: 0 1px 1px #000;*/
+  background: #6DBF6D;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  border: 1px solid #6DBF6D;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.format_glendon_menu_content > ul > li > a > span {
+  display: block;
+  border: 1px solid #666666;
+  padding: 6px 10px;
+ 
+  font-weight: bold;
+}
+.format_glendon_menu_content > ul > li > a:hover {
+  text-decoration: none;
+  background: #449D44;
+}
+.format_glendon_menu_content > ul > li.active {
+  border-bottom: none;
+}
+.format_glendon_menu_content > ul > li.active > a {
+  background: #449D44;
+  color: #fff;
+  border: 1px solid #449D44;
+}
+.format_glendon_menu_content > ul > li.active > a span {
+  border: 1px solid #97be10;
+}
+
+/* Sub menu */
+.format_glendon_menu_content ul ul {
+  padding: 5px 12px;
+  display: none;
+}
+.format_glendon_menu_content ul ul li {
+  padding: 3px 0;
+}
+.format_glendon_menu_content ul ul a {
+  display: block;
+  color: #595959;
+  font-size: 13px;
+  font-weight: bold;
+}
+.format_glendon_menu_content ul ul a:hover {
+  color: #79980d;
 }

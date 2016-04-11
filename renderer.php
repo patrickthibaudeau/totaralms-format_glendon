@@ -211,17 +211,37 @@ class format_glendon_renderer extends format_section_renderer_base {
 
 
         $cmList = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-        //Only print tabs if there are labels
-        //$this->get_section_modules($course, $displaysection);
+        
+        //This following code is required to find out if there are any modules within the section
         $section = convert_to_array($sectioninfo->getIterator());
         $courseModules = explode(',', $section['sequence']);
+        //Start two column container. Left for menu, right for content
+        //
+        //************ LEFT MENU***********************
+        if ($course->bootstrapversion == 2) {
+            echo  html_writer::start_tag('div', array('class' => 'span4'));
+        } else {
+            echo  html_writer::start_tag('div', array('class' => 'col-md-4'));
+        }
+        
+        echo $this->print_course_menu($course, $displaysection);
+        
+        echo  html_writer::end_tag('div');
+        //****************** END LEFT MENU**************
+        //
+        //****************** CONTENTS ******************
+        if ($course->bootstrapversion == 2) {
+            echo  html_writer::start_tag('div', array('class' => 'span8'));
+        } else {
+            echo  html_writer::start_tag('div', array('class' => 'col-md-8'));
+        }
+        //Only print tabs if there are labels
         if ($courseModules != null) {
             echo @$this->print_bootstrap3_tab_list($course, $displaysection);
             echo @$this->print_bootstrap3_tab_divs($course, $displaysection);
         }
-//        } else {
-//            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-//        }
+        echo  html_writer::end_tag('div');
+        //*******************END CONTENTS ****************
         // Now the list of sections..
         echo $this->start_section_list();
 
@@ -229,10 +249,6 @@ class format_glendon_renderer extends format_section_renderer_base {
         // Show completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
-
-//        echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-//        echo $this->courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection);
-        echo '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">Return</a>';
         echo $this->section_footer();
         echo $this->end_section_list();
 
@@ -358,116 +374,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         echo $this->end_section_div();
     }
 
-    /**
-     * Output the html for a multiple section page
-     *
-     * @param stdClass $course The course entry from DB
-     * @param array $sections (argument not used)
-     * @param array $mods (argument not used)
-     * @param array $modnames (argument not used)
-     * @param array $modnamesused (argument not used)
-     */
-    public function print_glendon_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $PAGE;
-
-        $modinfo = get_fast_modinfo($course);
-        $course = course_get_format($course)->get_course();
-
-        $context = context_course::instance($course->id);
-        // Title with completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
-        echo $this->output->heading($this->page_title(), 2, 'accesshide');
-
-        // Copy activity clipboard..
-        echo $this->course_activity_clipboard($course, 0);
-
-        // Now the list of sections..
-        echo $this->start_section_list();
-
-        foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-            if ($section == 0) {
-                // 0-section is displayed a little different then the others
-                if ($thissection->summary or ! empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
-                    echo $this->section_header($thissection, $course, false, 0);
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
-                    echo $this->section_footer();
-                }
-                continue;
-            }
-            if ($section > $course->numsections) {
-                // activities inside this section are 'orphaned', this section will be printed as 'stealth' below
-                continue;
-            }
-            // Show the section if the user is permitted to access it, OR if it's not available
-            // but there is some available info text which explains the reason & should display.
-            $showsection = $thissection->uservisible ||
-                    ($thissection->visible && !$thissection->available &&
-                    !empty($thissection->availableinfo));
-            if (!$showsection) {
-                // If the hiddensections option is set to 'show hidden sections in collapsed
-                // form', then display the hidden section message - UNLESS the section is
-                // hidden by the availability system, which is set to hide the reason.
-                if (!$course->hiddensections && $thissection->available) {
-                    echo $this->section_hidden($section, $course->id);
-                }
-
-                continue;
-            }
-
-            if (!$PAGE->user_is_editing() && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-                // Display section summary only.
-                echo $this->section_summary($thissection, $course, null);
-            } else {
-                echo $this->section_header($thissection, $course, false, 0);
-                if ($thissection->uservisible) {
-                    echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                    echo $this->courserenderer->course_section_add_cm_control($course, $section, 0);
-                }
-                echo $this->section_footer();
-            }
-        }
-
-        if ($PAGE->user_is_editing() and has_capability('moodle/course:update', $context)) {
-            // Print stealth sections if present.
-            foreach ($modinfo->get_section_info_all() as $section => $thissection) {
-                if ($section <= $course->numsections or empty($modinfo->sections[$section])) {
-                    // this is not stealth section or it is empty
-                    continue;
-                }
-                echo $this->stealth_section_header($section);
-                echo $this->courserenderer->course_section_cm_list($course, $thissection, 0);
-                echo $this->stealth_section_footer();
-            }
-
-            echo $this->end_section_list();
-
-            echo html_writer::start_tag('div', array('id' => 'changenumsections', 'class' => 'mdl-right'));
-
-            // Increase number of sections.
-            $straddsection = get_string('increasesections', 'moodle');
-            $url = new moodle_url('/course/changenumsections.php', array('courseid' => $course->id,
-                'increase' => true,
-                'sesskey' => sesskey()));
-            $icon = $this->output->pix_icon('t/switch_plus', $straddsection);
-            echo html_writer::link($url, $icon . get_accesshide($straddsection), array('class' => 'increase-sections'));
-
-            if ($course->numsections > 0) {
-                // Reduce number of sections sections.
-                $strremovesection = get_string('reducesections', 'moodle');
-                $url = new moodle_url('/course/changenumsections.php', array('courseid' => $course->id,
-                    'increase' => false,
-                    'sesskey' => sesskey()));
-                $icon = $this->output->pix_icon('t/switch_minus', $strremovesection);
-                echo html_writer::link($url, $icon . get_accesshide($strremovesection), array('class' => 'reduce-sections'));
-            }
-
-            echo html_writer::end_tag('div');
-        } else {
-            echo $this->end_section_list();
-        }
-    }
+    
 
     /**
      * 
@@ -824,32 +731,35 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param int $displaysection
      * @return array containing
      */
-    private function get_section_modules($course, $displaysection) {
+    private function print_course_menu($course, $displaysection) {
         global $CFG, $DB, $OUTPUT;
 
         //Get course modules
         $modinfo = get_fast_modinfo($course->id);
-        //Get this section info
-        $sectionInfo = $modinfo->get_section_info($displaysection);
-        //Convert sectin info into an array
-        $section = convert_to_array($sectionInfo->getIterator());
-        //get all course modules for this section in the order that they appear in the section
-        $courseModules = explode(',', $section['sequence']);
-
-        $i = 0;
-
-
-
-        foreach ($courseModules as $key => $value) {
-            $thisModule = $modinfo->cms[$value];
-            print_object($thisModule->get_course_module_record());
-            echo '<img src="' . $thisModule->get_icon_url() . '"> ' . $thisModule->get_formatted_name();
-            $sectionModules[$i] = $thisModule;
-
-            $i++;
+        $sections = $modinfo->get_sections();
+        $html = '<div class="block format_glendon_menu">' . "\n";
+        $html .= '   <div class="header format_glendon_menu_header">' . "\n";
+        $html .= '       ' . get_string('main_menu', 'format_glendon') . "\n";
+        $html .= '   </div>' . "\n";
+        $html .= '   <div class="content format_glendon_menu_content">' . "\n";
+        $html .= '      <ul class="format_glendon_ul">' . "\n";
+        foreach ($sections as $thisSection => $value) {
+            $sectionInfo = $modinfo->get_section_info($thisSection);
+            if ($displaysection == $thisSection) {
+                $classActive = 'active';
+            } else {
+                $classActive = '';
+            }
+            $html .= '      <li class="format_glendon_li ' . $classActive . '"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
+                        . '  title="' . get_section_name($course, $sectionInfo) . '">'
+                        . get_section_name($course, $sectionInfo) . '</a></li>';
         }
-
-        return;
+        $html .= '      <li class="format_glendon_li"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '" ><i class="fa fa-home"></i> ' . get_string('return', 'format_glendon') . '</a></li>' . "\n";  
+        $html .= '      </ul>' . "\n";
+        
+        $html .= '  </div>'. "\n";
+        $html .= '</div>'. "\n";
+        return $html;
     }
 
 }
