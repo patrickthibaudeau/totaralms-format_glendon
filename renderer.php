@@ -699,20 +699,45 @@ class format_glendon_renderer extends format_section_renderer_base {
 
 
             for ($x = 1; $x < count($courseModulesByLabel[$z]); $x++) {
+                //Get the module
                 $module = get_module_from_cmid($courseModulesByLabel[$z][$x]);
-                $thisModule = $modinfo->cms[$courseModulesByLabel[$z][$x]];
-//                print_object($thisModule);
-
-                if ($thisModule->get_module_type_name() == 'Label') {
-                    $image = '';
-                    $link = $thisModule->get_formatted_content();
+                //Get simple module info
+                $thisModule = $modinfo->get_cm($courseModulesByLabel[$z][$x]);
+                //Convert to array. Required to be able to get all information as not all get methods exist for the object
+                $thisModuleArray = convert_to_array($thisModule);
+                //Keep this commented print_object. you will need it when you integrate completion info.
+//                print_object($thisModuleArray);
+                //Add note so that teacher knows it is hidden for students
+                if ($thisModuleArray['visible'] == true) {
+                    $hiddenFromStudents = '';
                 } else {
-                    $image = '<img src="' . $thisModule->get_icon_url() . '" />';
-                    $link = '<a href="' . $CFG->wwwroot . '/mod/' . strtolower($thisModule->get_module_type_name()) . '/view.php?id=' . $thisModuleInfo->id . '">'
-                            . $thisModule->get_formatted_name() . '</a>';
+                    $hiddenFromStudents = ' <span class="badge">' . get_string('hidden', 'format_glendon') . '</span>';
                 }
 
-                $html .= '          <div class="format_glendon_content_span">' . $image . ' ' . $link . '</div>';
+                //Completion information
+                if ($thisModuleArray['completionview'] == true) {
+                    if ($thisModuleArray['completion'] == true) {
+                        $completion = '<i class="glyphicon glyphicon-check format_glendon_complete"></i>';
+                    } else {
+                        $completion = '';
+                    }
+                } else {
+                    $completion = '';
+                }
+
+                //Only display if it is visible to the user
+                if ($thisModuleArray['uservisible'] == true) {
+                    if ($thisModuleArray['modname'] == 'label') {
+                        $image = '';
+                        $link = $thisModule->get_formatted_content();
+                    } else {
+                        $image = '<img src="' . $thisModule->get_icon_url() . '" />';
+                        $link = '<a href="' . $CFG->wwwroot . '/mod/' . $thisModuleArray['modname'] . '/view.php?id=' . $thisModuleArray['id'] . '">'
+                                . $thisModule->get_formatted_name() . '</a>';
+                    }
+
+                    $html .= '          <div class="format_glendon_content_span">' . $image . ' ' . $link . $hiddenFromStudents . $completion . '</div>';
+                }
             }
 
             $html .= '              </div> ';
