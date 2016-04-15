@@ -65,4 +65,13 @@ if ($ADMIN->fulltree) {
     $description = get_string('tab_label_help', 'format_glendon');
     $default = 25;
     $settings->add(new admin_setting_configtext($name, $title, $description, $default));
+    $name = 'format_glendon/coverimage';
+    $title = get_string('cover_image', 'format_glendon');
+    $description = get_string('cover_image_help', 'format_glendon');
+    $filearea =  '/format_glendon/';
+    $options = array(
+        'maxfiles' => 1,
+        'accepted_types' => 'jpg,gif,png,svg'
+    );
+    $settings->add(new admin_setting_configstoredfile($name, $title, $description, $filearea, 0, $options));
 }

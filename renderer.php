@@ -347,6 +347,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
         $context = context_course::instance($course->id);
+        $config = get_config('format_glendon');
+       // print_object($config);
 
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
