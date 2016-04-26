@@ -348,8 +348,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $course = course_get_format($course)->get_course();
         $context = context_course::instance($course->id);
         $config = get_config('format_glendon');
-       // print_object($config);
-
+        // print_object($config);
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
@@ -366,6 +365,19 @@ class format_glendon_renderer extends format_section_renderer_base {
         $numberOfRows = ceil($numberOfSections / $numberOfColumns);
         $bootstrapVersion = $course->bootstrapversion;
 
+        //Print image
+        $out = array();
+        $context = context_course::instance($course->id);
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'format_glendon', 'cover_image', 1);
+print_object($files);
+        foreach ($files as $file) {
+            $filename = $file->get_filename();
+            $url = moodle_url::make_file_url('/pluginfile.php', array($file->get_contextid(), 'format_glendon', 'cover_image',
+                        $file->get_itemid(), $file->get_filepath(), $filename));
+            $out[] = html_writer::link($url, $filename);
+        }
+        print_object($out);
         //Print section 0 also known as start here
         echo $this->print_section_row_start($bootstrapVersion);
         echo $this->print_start_here($bootstrapVersion, $course);
