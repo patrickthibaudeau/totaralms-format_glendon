@@ -342,7 +342,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param array $modnamesused (argument not used)
      */
     public function print_course_front_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $PAGE;
+        global $CFG, $PAGE;
 
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
@@ -370,18 +370,21 @@ class format_glendon_renderer extends format_section_renderer_base {
         $context = context_course::instance($course->id);
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'format_glendon', 'cover_image', 1);
-print_object($files);
+
         foreach ($files as $file) {
             $filename = $file->get_filename();
-            $url = moodle_url::make_file_url('/pluginfile.php', array($file->get_contextid(), 'format_glendon', 'cover_image',
-                        $file->get_itemid(), $file->get_filepath(), $filename));
-            $out[] = html_writer::link($url, $filename);
+            $out[] = '<img class="img-responsive" src="' . $CFG->wwwroot . '/pluginfile.php/' . $file->get_contextid() . '/format_glendon/cover_image/' . $file->get_itemid() . '/' . $filename . '" alt="' . $filename . '">';
         }
-        print_object($out);
+        echo $this->print_section_row_start($bootstrapVersion);
+        echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
+        echo $out[1];
+        echo html_writer::end_tag('div');
+        echo $this->print_section_row_end();
         //Print section 0 also known as start here
         echo $this->print_section_row_start($bootstrapVersion);
         echo $this->print_start_here($bootstrapVersion, $course);
         echo $this->print_section_row_end();
+
 
         //Print all other sections
         for ($i = 0; $i < $numberOfRows; $i++) {
@@ -428,7 +431,7 @@ print_object($files);
             $thisSection = ($rowStartSectionNumber + $i);
 
             if ($sectionInfo = $modinfo->get_section_info($thisSection)) {
-                $html .= html_writer::start_tag('div', array('class' => 'well well-lg well-glendon', 'style' => 'text-align: center'));
+                $html .= html_writer::start_tag('div', array('class' => 'well well-lg', 'style' => 'text-align: center; word-wrap: break-word;'));
                 $html .= '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
                         . ' class="' . $btnClass . '" title="' . get_section_name($course, $sectionInfo) . '">'
                         . get_section_name($course, $sectionInfo) . '</a>';

@@ -222,15 +222,15 @@ class format_glendon extends format_base {
      * @param bool $foreditform
      * @return array of options
      */
-    public function course_format_options($foreditform = false) { 
+    public function course_format_options($foreditform = false) {
         global $COURSE;
         static $courseformatoptions = false;
         $glendoncourseconfig = get_config('format_glendon');
         $context = context_course::instance($COURSE->id);
         $draftitemid = file_get_submitted_draft_itemid('coverimage');
-    file_prepare_draft_area($draftitemid, $context->id, 'format_glendon', 'coverimage', 1, array('subdirs' => 0, 'maxfiles' => 1));
+        file_prepare_draft_area($draftitemid, $context->id, 'format_glendon', 'coverimage', 1, array('subdirs' => 0, 'maxfiles' => 1));
 
-    $glendoncourseconfig->coverimage = $draftitemid;
+        $glendoncourseconfig->coverimage = $draftitemid;
         if ($courseformatoptions === false) {
             $courseconfig = get_config('moodlecourse');
             $courseformatoptions = array(
@@ -421,7 +421,7 @@ class format_glendon extends format_base {
      */
     public function update_course_format_options($data, $oldcourse = null) {
         global $DB, $COURSE;
-        
+
         $data = (array) $data;
         if ($oldcourse !== null) {
             $oldcourse = (array) $oldcourse;
@@ -459,8 +459,8 @@ class format_glendon extends format_base {
 
         $context = context_course::instance($COURSE->id);
         //Cover image
-        file_save_draft_area_files($data->coverimage, $context->id, 'format_glendon', 'cover_image', 1, array('subdirs' => 0, 'maxfiles' => 1));
-        
+        file_save_draft_area_files($data['coverimage'], $context->id, 'format_glendon', 'cover_image', 1, array('subdirs' => 0, 'maxfiles' => 1));
+
         return $changed;
     }
 
@@ -500,45 +500,35 @@ class format_glendon extends format_base {
 
 }
 
-function format_glendon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
-    if ($context->contextlevel != context_course::instance($course->id)) {
+function format_glendon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    global $DB;
+    
+    if ($context->contextlevel != CONTEXT_COURSE) {
         return false;
     }
-
-    // Make sure the filearea is one of those used by the plugin.
-    if ($filearea !== 'format_glendon') {
+    
+    require_login();
+   
+    if ($filearea != 'cover_image') {
         return false;
     }
-
-    // Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).
-    require_login($course, true, $cm);
-
-    // Check the relevant capabilities - these may vary depending on the filearea being accessed.
-    if (!has_capability('moodle/grade:view', $context)) {
-        return false;
-    }
-
-    // Leave this line out if you set the itemid to null in make_pluginfile_url (set $itemid to 0 instead).
-    $itemid = array_shift($args); // The first item in the $args array.
-    // Use the itemid to retrieve any relevant data records and perform any security checks to see if the
-    // user really does have access to the file in question.
-    // Extract the filename / filepath from the $args array.
-    $filename = array_pop($args); // The last item in the $args array.
-    if (!$args) {
-        $filepath = '/'; // $args is empty => the path is '/'
-    } else {
-        $filepath = '/' . implode('/', $args) . '/'; // $args contains elements of the filepath
-    }
-
-    // Retrieve the file from the Files API.
+     
+    $itemid = (int)array_shift($args);
+    
+    
     $fs = get_file_storage();
+    $filename = array_pop($args);
+    
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/'.implode('/', $args).'/';
+    }
+    
     $file = $fs->get_file($context->id, 'format_glendon', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
-        return false; // The file does not exist.
+        return false;
     }
-
-    // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering. 
-    // From Moodle 2.3, use send_stored_file instead.
-    send_file($file, 86400, 0, $forcedownload, $options);
+    
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
