@@ -170,6 +170,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
+        $bootstrapVersion = $course->bootstrapversion;
 
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
@@ -208,6 +209,13 @@ class format_glendon_renderer extends format_section_renderer_base {
         $sectiontitle .= $this->output->heading($sectionname, 3, $classes);
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
+
+        //If there is a section summary, print it here
+        if ($this->format_summary_text($thissection)) {
+            echo html_writer::start_tag('div', array('class' => 'summary alert alert-warning', 'style' => 'margin-top: 10px;'));
+            echo $this->format_summary_text($thissection);
+            echo html_writer::end_tag('div');
+        }
 
         if ($course->bootstrapversion == 2) {
             echo html_writer::start_tag('div', array('class' => 'row-fluid', 'style' => 'margin-top: 15px;'));
@@ -447,7 +455,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $bootstrapColumnNumber = 12 / $numberOfColumns;
         $modinfo = get_fast_modinfo($course);
         $html = '';
-        
+
         if ($bootstrapVersion == 3) {
             $columnClass = 'col-md-' . $bootstrapColumnNumber;
         } else {
@@ -842,6 +850,65 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= '  </div>' . "\n";
         $html .= '</div>' . "\n";
         return $html;
+    }
+
+    /**
+     * Generate the display of the header part of a section before
+     * course modules are included
+     *
+     * @param stdClass $section The course_section entry from DB
+     * @param stdClass $course The course entry from DB
+     * @param bool $onsectionpage true if being printed on a single-section page
+     * @param int $sectionreturn The section to return to after an action
+     * @return string HTML to output.
+     */
+    protected function section_header($section, $course, $onsectionpage, $sectionreturn = null) {
+        global $PAGE;
+
+        $o = '';
+        $currenttext = '';
+        $sectionstyle = '';
+
+        if ($section->section != 0) {
+            // Only in the non-general sections.
+            if (!$section->visible) {
+                $sectionstyle = ' hidden';
+            } else if (course_get_format($course)->is_section_current($section)) {
+                $sectionstyle = ' current';
+            }
+        }
+
+        $o.= html_writer::start_tag('li', array('id' => 'section-' . $section->section,
+                    'class' => 'section main clearfix' . $sectionstyle, 'role' => 'region',
+                    'aria-label' => get_section_name($course, $section)));
+
+        // Create a span that contains the section title to be used to create the keyboard section move menu.
+        $o .= html_writer::tag('span', $this->section_title($section, $course), array('class' => 'hidden sectionname'));
+
+        $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
+        $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
+
+        $rightcontent = $this->section_right_content($section, $course, $onsectionpage);
+        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
+        $o.= html_writer::start_tag('div', array('class' => 'content'));
+
+        // When not on a section page, we display the section titles except the general section if null
+        $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
+
+        // When on a section page, we only display the general section title, if title is not the default one
+        $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
+
+        $classes = ' accesshide';
+        if ($hasnamenotsecpg || $hasnamesecpg) {
+            $classes = '';
+        }
+        $sectionname = html_writer::tag('span', $this->section_title($section, $course));
+        $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
+
+        $context = context_course::instance($course->id);
+        $o .= $this->section_availability_message($section, has_capability('moodle/course:viewhiddensections', $context));
+
+        return $o;
     }
 
 }
