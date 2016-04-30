@@ -348,6 +348,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $course = course_get_format($course)->get_course();
         $context = context_course::instance($course->id);
         $config = get_config('format_glendon');
+        $bootstrapVersion = $course->bootstrapversion;
         // print_object($config);
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
@@ -360,12 +361,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         // Now the list of sections..
         echo $this->start_section_div();
 
-        $numberOfSections = $course->numsections;
-        $numberOfColumns = $course->numcolumns;
-        $numberOfRows = ceil($numberOfSections / $numberOfColumns);
-        $bootstrapVersion = $course->bootstrapversion;
-
-        //Print image
+        //*********************Print image if there is one **********************
         $out = array();
         $context = context_course::instance($course->id);
         $fs = get_file_storage();
@@ -375,25 +371,62 @@ class format_glendon_renderer extends format_section_renderer_base {
             $filename = $file->get_filename();
             $out[] = '<img class="img-responsive" src="' . $CFG->wwwroot . '/pluginfile.php/' . $file->get_contextid() . '/format_glendon/cover_image/' . $file->get_itemid() . '/' . $filename . '" alt="' . $filename . '">';
         }
-        echo $this->print_section_row_start($bootstrapVersion);
-        echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
-        echo $out[1];
-        echo html_writer::end_tag('div');
-        echo $this->print_section_row_end();
-        //Print section 0 also known as start here
+        if (isset($out[1])) {
+            echo $this->print_section_row_start($bootstrapVersion);
+            echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
+            echo $out[1];
+            echo html_writer::end_tag('div');
+            echo $this->print_section_row_end();
+        }
+        //***************** Print section 0 also known as start here ************
         echo $this->print_section_row_start($bootstrapVersion);
         echo $this->print_start_here($bootstrapVersion, $course);
         echo $this->print_section_row_end();
+
+        //********************* Print out course sections ***********************
+        //Get printable sections
+        $printableSections = $this->get_printable_sections($course);
+        //Make array start at 1
+        $printableSections = array_combine(range(1, count($printableSections)), array_values($printableSections));
+//        $numberOfSections = $course->numsections;
+        $numberOfSections = count($printableSections);
+        $numberOfColumns = $course->numcolumns;
+        $numberOfRows = ceil($numberOfSections / $numberOfColumns);
 
 
         //Print all other sections
         for ($i = 0; $i < $numberOfRows; $i++) {
             echo $this->print_section_row_start($bootstrapVersion);
-            echo $this->print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $i, $course);
+            echo $this->print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $i, $course, $printableSections);
             echo $this->print_section_row_end();
         }
 
         echo $this->end_section_div();
+    }
+
+    /**
+     * Returns an array with the sections that can be printed
+     * @global stdClass $CFG
+     * @global moodle_page $PAGE
+     * @param stdClass $course
+     * @return array
+     */
+    protected function get_printable_sections($course) {
+        global $CFG, $PAGE;
+
+        $modinfo = get_fast_modinfo($course);
+        //Sections with contents
+        $courseSections = $modinfo->get_sections();
+        unset($courseSections[0]);
+        $sections = array();
+        foreach ($courseSections as $thisSection => $sectionId) {
+            $sectionInfo = convert_to_array($modinfo->get_section_info($thisSection));
+            if ($sectionInfo['visible'] == true) {
+                $sections[] = $thisSection;
+            }
+        }
+
+        return $sections;
     }
 
     /**
@@ -407,37 +440,34 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param stdClass $course
      * @return string HTML
      */
-    protected function print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $rowNumber, $course) {
+    protected function print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $rowNumber, $course, $printableSections) {
         global $CFG, $PAGE;
 
         $rowStartSectionNumber = ($rowNumber * $numberOfColumns) + 1;
         $bootstrapColumnNumber = 12 / $numberOfColumns;
         $modinfo = get_fast_modinfo($course);
         $html = '';
-
-
-
+        
         if ($bootstrapVersion == 3) {
             $columnClass = 'col-md-' . $bootstrapColumnNumber;
-            $btnClass = 'btn btn-lg btn-link';
         } else {
             $columnClass = 'span' . $bootstrapColumnNumber;
-            $btnClass = 'btn btn-large';
         }
-
-        for ($i = 0; $i < $numberOfColumns; $i++) {
+        //Get section number according to row start;
+        $thisSection = $rowStartSectionNumber;
+        for ($i = 1; $i <= $numberOfColumns; $i++) {
             $html .= html_writer::start_tag('div', array('class' => $columnClass));
+            if (isset($printableSections[$thisSection])) {
+                if ($sectionInfo = $modinfo->get_section_info($printableSections[$thisSection])) {
 
-            $thisSection = ($rowStartSectionNumber + $i);
-
-            if ($sectionInfo = $modinfo->get_section_info($thisSection)) {
-                $html .= html_writer::start_tag('div', array('class' => 'well well-lg', 'style' => 'text-align: center; word-wrap: break-word;'));
-                $html .= '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
-                        . ' class="' . $btnClass . '" title="' . get_section_name($course, $sectionInfo) . '">'
-                        . get_section_name($course, $sectionInfo) . '</a>';
-                $html .= html_writer::end_tag('div');
+                    $html .= html_writer::start_tag('div', array('class' => 'well well-lg', 'style' => 'text-align: center; word-wrap: break-word;'));
+                    $html .= '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
+                            . '  title="' . get_section_name($course, $sectionInfo) . '">'
+                            . get_section_name($course, $sectionInfo) . '</a>';
+                    $html .= html_writer::end_tag('div');
+                    $thisSection++;
+                }
             }
-
             $html .= html_writer::end_tag('div');
         }
 
