@@ -357,6 +357,9 @@ class format_glendon_renderer extends format_section_renderer_base {
         $context = context_course::instance($course->id);
         $config = get_config('format_glendon');
         $bootstrapVersion = $course->bootstrapversion;
+        //Redirect to highlighted section
+        @$this->redirect_highlighted_section($course);
+
         // print_object($config);
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
@@ -428,13 +431,40 @@ class format_glendon_renderer extends format_section_renderer_base {
         unset($courseSections[0]);
         $sections = array();
         foreach ($courseSections as $thisSection => $sectionId) {
-            $sectionInfo = convert_to_array($modinfo->get_section_info($thisSection));
+            $sectionInfo = $modinfo->get_section_info($thisSection);
+            $sectionInfo = convert_to_array($sectionInfo);
+
             if ($sectionInfo['visible'] == true) {
                 $sections[] = $thisSection;
             }
         }
 
         return $sections;
+    }
+
+    /**
+     * Returns an array with the sections that can be printed
+     * @global stdClass $CFG
+     * @global moodle_page $PAGE
+     * @param stdClass $course
+     * @return array
+     */
+    protected function redirect_highlighted_section($course) {
+        global $CFG, $PAGE;
+
+        $modinfo = get_fast_modinfo($course);
+        //Sections with contents
+        $courseSections = $modinfo->get_sections();
+        unset($courseSections[0]);
+        foreach ($courseSections as $thisSection => $sectionId) {
+            $sectionInfo = $modinfo->get_section_info($thisSection);
+            $sectionInfoArray = convert_to_array($sectionInfo);
+            if ($sectionInfoArray['visible'] == true) {
+                if (course_get_format($course)->is_section_current($sectionInfo)) {
+                    redirect($CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection, '', 0);
+                }
+            }
+        }
     }
 
     /**
