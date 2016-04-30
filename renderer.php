@@ -815,7 +815,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         //Get course modules
         $modinfo = get_fast_modinfo($course->id);
-        $sections = $modinfo->get_sections();
+        $sections = $this->get_printable_sections($course);
         $html = '<div class="block format_glendon_menu">' . "\n";
         $html .= '   <div class="header format_glendon_menu_header">' . "\n";
         $html .= '       <h2>' . get_string('main_menu', 'format_glendon') . '</h2>' . "\n";
@@ -823,7 +823,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= '   <div class="content format_glendon_menu_content">' . "\n";
         $html .= '      <ul class="format_glendon_ul">' . "\n";
         $html .= '      <li class="format_glendon_li"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '" ><i class="fa fa-home"></i> ' . get_string('return', 'format_glendon') . '</a></li>' . "\n";
-        foreach ($sections as $thisSection => $value) {
+        foreach ($sections as $key => $thisSection) {
             $sectionInfo = $modinfo->get_section_info($thisSection);
             if ($displaysection == $thisSection) {
                 $classActive = 'active';
