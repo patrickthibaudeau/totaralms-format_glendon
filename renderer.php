@@ -209,9 +209,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $sectiontitle .= $this->output->heading($sectionname, 3, $classes);
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
-
         //If there is a section summary, print it here
-        if ($this->format_summary_text($thissection)) {
+        if (($this->format_summary_text($thissection)) && ($this->format_summary_text($thissection) != '<div class="no-overflow"><br></div>')) {
             echo html_writer::start_tag('div', array('class' => 'summary alert alert-warning', 'style' => 'margin-top: 10px;'));
             echo $this->format_summary_text($thissection);
             echo html_writer::end_tag('div');

@@ -262,6 +262,10 @@ class format_glendon extends format_base {
                     'default' => $glendoncourseconfig->tablabel,
                     'type' => PARAM_INT,
                 ),
+                'course_title' => array(
+                    'default' => $glendoncourseconfig->course_title,
+                    'type' => PARAM_INT,
+                ),
                 'coverimage' => array(
                     'default' => $glendoncourseconfig->coverimage,
                     'type' => PARAM_FILE,
@@ -354,6 +358,18 @@ class format_glendon extends format_base {
                         'value' => $glendoncourseconfig->tablabel
                     ),
                     'help' => 'tab_label',
+                    'help_component' => 'format_glendon',
+                ),
+                'course_title' => array(
+                    'label' => new lang_string('course_title', 'format_glendon'),
+                    'element_type' => 'select',
+                    'element_attributes' => array(
+                        array(
+                            1 => get_string('yes'),
+                            0 => get_string('no'),
+                        )
+                    ),
+                    'help' => 'course_title',
                     'help_component' => 'format_glendon',
                 ),
                 'coverimage' => array(
@@ -483,6 +499,10 @@ class format_glendon extends format_base {
      */
     public function course_content_header() {
         global $CFG, $COURSE;
+        //Get course config;
+        $config = course_get_format($COURSE)->get_course();
+        //Will be used to determine if on front page or not
+        $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
         if (!strstr($url, 'course')) {
             //Add font-awesome
@@ -495,6 +515,17 @@ class format_glendon extends format_base {
             $sectionName = $this->get_section_name($cm[1]['sectionnum']);
             //Add link button back to section page
             echo '<a class="btn btn-success" title="' . $sectionName . '" href="' . $CFG->wwwroot . '/course/view.php?id=' . $cm[0]['id'] . '&section=' . $cm[1]['sectionnum'] . '"><i class="fa fa-chevron-left"></i> &nbsp;' . $sectionName . '</a>';
+        } else {
+            if ($config->course_title == true && $section == 0) {
+                if ($config->bootstrapversion == 3) {
+                    $class = 'col-md-12';
+                } else {
+                    $class = 'span12';
+                }
+                echo '<div class="' . $class . '" align="center" style="margin-bottom: 10px;">' . "\n";
+                echo '<span class="glendon-course-title">' . $COURSE->fullname . '</span>';
+                echo '</div>';
+            }
         }
     }
 
