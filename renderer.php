@@ -683,7 +683,8 @@ class format_glendon_renderer extends format_section_renderer_base {
 
             foreach ($courseModules as $key => $value) {
                 $thisModule = $modinfo->cms[$value];
-                if ($thisModule->get_module_type_name() == 'Label') {
+                $thisModuleArray = convert_to_array($thisModule);
+                if ($thisModuleArray['modname'] == 'label') {
                     $labelName = $thisModule->get_formatted_name();
                     //If lentgh is more than 25 Characters cut the label
                     if (strlen($labelName) < $config->tablabel) {
@@ -736,7 +737,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $i = 0;
         foreach ($courseModules as $key => $value) {
             $thisModule = $modinfo->cms[$value];
-            if ($thisModule->get_module_type_name() == 'Label') {
+            $thisModuleArray = convert_to_array($thisModule);
+            if ($thisModuleArray['modname'] == 'label') {
                 $labels[$i] = $i;
                 $i++;
             }
@@ -749,8 +751,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         foreach ($courseModules as $key => $value) {
             $thisModule = $modinfo->cms[$value];
             $thisModuleInfo = $thisModule->get_course_module_record();
-
-            if ($thisModule->get_module_type_name() == 'Label') {
+            $thisModuleArray = convert_to_array($thisModule);
+            if ($thisModuleArray['modname'] == 'label') {
 
                 if (strlen($thisModule->get_formatted_name()) >= $config->tablabel) {
                     $x++;
