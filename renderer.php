@@ -727,7 +727,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $section = convert_to_array($sectionInfo->getIterator());
         $courseModules = explode(',', $section['sequence']);
         //Get the config data for the module
-        $config = get_config('format_glendon');
+        
 
         $labels = array();
 
@@ -751,7 +751,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $thisModuleArray = convert_to_array($thisModule);
             if ($thisModuleArray['modname'] == 'label') {
 
-                if (strlen($thisModule->get_formatted_name()) >= $config->tablabel) {
+                if (strlen($thisModule->get_formatted_name()) >= $course->tablabel) {
                     $x++;
                     $courseModulesByLabel[$i][$x] = $thisModuleInfo->id;
                 } else {
