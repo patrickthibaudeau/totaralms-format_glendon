@@ -504,7 +504,9 @@ class format_glendon extends format_base {
         //Will be used to determine if on front page or not
         $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
-        if (!strstr($url, 'course')) {
+        
+        
+        if ((!strstr($url, 'course')) && (!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question')) && (!strstr($url, 'calendar')) && (!strstr($url, 'forum=')) && (!strstr($url, '?f=')) && (!strstr($url, 'forum/search.php')) && (!strstr($url, 'blocks'))) {
             //Add font-awesome
             echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 ';
@@ -522,9 +524,11 @@ class format_glendon extends format_base {
                 } else {
                     $class = 'span12';
                 }
-                echo '<div class="' . $class . '" align="center" style="margin-bottom: 10px;">' . "\n";
-                echo '<span class="glendon-course-title">' . $COURSE->fullname . '</span>';
-                echo '</div>';
+                if ((!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question'))) {
+                    echo '<div class="' . $class . '" align="center" style="margin-bottom: 10px;">' . "\n";
+                    echo '<span class="glendon-course-title">' . $COURSE->fullname . '</span>';
+                    echo '</div>';
+                }
             }
         }
     }
