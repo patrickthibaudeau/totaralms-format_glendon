@@ -672,9 +672,6 @@ class format_glendon_renderer extends format_section_renderer_base {
         //get all course modules for this section in the order that they appear in the section
         $courseModules = explode(',', $section['sequence']);
         //Get the config data for the module
-        $config = get_config('format_glendon');
-        //Set class
-
 
         $i = 0;
 
@@ -687,7 +684,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                 if ($thisModuleArray['modname'] == 'label') {
                     $labelName = $thisModule->get_formatted_name();
                     //If lentgh is more than 25 Characters cut the label
-                    if (strlen($labelName) < $config->tablabel) {
+                    if (strlen($labelName) < $course->tablabel) {
                         if ($i != 0) {
                             $activeClass = 'class="' . $class . '"';
                         } else {
