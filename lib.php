@@ -506,7 +506,7 @@ class format_glendon extends format_base {
         $url = $_SERVER['REQUEST_URI'];
         
         
-        if ((!strstr($url, 'course')) && (!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question')) && (!strstr($url, 'calendar')) && (!strstr($url, 'forum=')) && (!strstr($url, '?f=')) && (!strstr($url, 'forum/search.php')) && (!strstr($url, 'blocks'))) {
+        if ((!strstr($url, 'course')) && (!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question')) && (!strstr($url, 'calendar')) && (!strstr($url, 'forum=')) && (!strstr($url, '?f=')) && (!strstr($url, 'forum/search.php')) && (!strstr($url, 'blocks')) && (!strstr($url, 'quiz'))) {
             //Add font-awesome
             echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 ';
