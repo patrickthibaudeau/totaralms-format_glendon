@@ -505,13 +505,16 @@ class format_glendon extends format_base {
         $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
         
-        
-        if ((!strstr($url, 'course')) && (!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question')) && (!strstr($url, 'calendar')) && (!strstr($url, 'forum=')) && (!strstr($url, '?f=')) && (!strstr($url, 'forum/search.php')) && (!strstr($url, 'blocks')) && (!strstr($url, 'quiz'))) {
+        if (strstr($url, 'mod')) {
             //Add font-awesome
             echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 ';
             //Get module ID
-            $id = required_param('id', PARAM_INT);
+            $id = optional_param('id', 0, PARAM_INT);
+            $contextid = optional_param('contextid', 0, PARAM_INT);
+            if ($id == 0) {
+                $id = $contextid;
+            }
             $cm = get_course_and_cm_from_cmid($id);
             $cm = convert_to_array($cm);
             $sectionName = $this->get_section_name($cm[1]['sectionnum']);
