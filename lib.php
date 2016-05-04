@@ -498,23 +498,19 @@ class format_glendon extends format_base {
      * @global moodle_course $COURSE
      */
     public function course_content_header() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $PAGE;
+        $editing = $PAGE->user_is_editing();
+        $id = optional_param('id', 0, PARAM_INT);
         //Get course config;
         $config = course_get_format($COURSE)->get_course();
         //Will be used to determine if on front page or not
         $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
         
-        if (strstr($url, 'mod') && !strstr($url,'adobeconnect/participants.php') && !strstr($url, 'course')) {
+        if (($editing == false) && ($id != 0) && strstr($url, 'mod') && !strstr($url,'adobeconnect/participants.php') && !strstr($url, 'course') && !strstr($url, 'quiz')) {
             //Add font-awesome
-            echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-';
-            //Get module ID
-            $id = optional_param('id', 0, PARAM_INT);
-            $contextid = optional_param('contextid', 0, PARAM_INT);
-            if ($id == 0) {
-                $id = $contextid;
-            }
+            echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">';
+            
             $cm = get_course_and_cm_from_cmid($id);
             $cm = convert_to_array($cm);
             $sectionName = $this->get_section_name($cm[1]['sectionnum']);
