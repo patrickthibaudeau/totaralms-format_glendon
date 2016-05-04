@@ -805,7 +805,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                 } else {
                     $completion = '';
                 }
-                print_object($thisModuleArray);
+                
                 //Only display if it is visible to the user
                 if ($thisModuleArray['uservisible'] == true) {
                     if ($thisModuleArray['modname'] == 'label') {
