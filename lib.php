@@ -505,7 +505,7 @@ class format_glendon extends format_base {
         $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
         
-        if (strstr($url, 'mod') && !strstr($url,'adobeconnect/participants.php')) {
+        if (strstr($url, 'mod') && !strstr($url,'adobeconnect/participants.php') && !strstr($url, 'course')) {
             //Add font-awesome
             echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 ';
