@@ -807,17 +807,22 @@ class format_glendon_renderer extends format_section_renderer_base {
                 }
                 
                 //Only display if it is visible to the user
-                if ($thisModuleArray['uservisible'] == true) {
-                    if ($thisModuleArray['modname'] == 'label') {
+                if ($thisModule->uservisible == true) {
+                    if ($thisModule->modname == 'label') {
                         $image = '';
                         $link = $thisModule->get_formatted_content();
                     } else {
                         $image = '<img src="' . $thisModule->get_icon_url() . '" />';
-                        $link = '<a href="' . $CFG->wwwroot . '/mod/' . $thisModuleArray['modname'] . '/view.php?id=' . $thisModuleArray['id'] . '">'
+                        if ($thisModule->onclick) {
+                            $onclick = 'onclick="' . $thisModule->onclick . '"';
+                        } else {
+                            $onclick = '';
+                        }
+                        $link = '<a href="' . $activity->url . '" ' . $onclick . '>'
                                 . $thisModule->get_formatted_name() . '</a>';
+                      
                     }
-
-                    $html .= '          <div class="format_glendon_content_span">' . $image . ' ' . $link . $hiddenFromStudents . $completion . '</div>';
+                    $html .= '          <div class="format_glendon_content">' . $image . ' ' . $link . $hiddenFromStudents . $completion .  '</div>';
                 }
             }
 

@@ -97,7 +97,7 @@
     color: #79980d;
 }
 
-.format_glendon_content_span {
+.format_glendon_content {
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -106,5 +106,5 @@
 .glendon-course-title {
     
     font-size: 40px;
-    letter-spacing: 10px;
+    letter-spacing: 4px;
 } 
