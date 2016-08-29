@@ -589,9 +589,11 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= '    </div>';
         $html .= '    <div id="collapseOne" class="panel-collapse collapse ' . $in . '" role="tabpanel" aria-labelledby="headingOne">';
         $html .= '      <div class="panel-body">';
-        $html .= '        <div class="well well-lg">';
-        $html .= '          ' . $summary;
-        $html .= '        </div>';
+        if (!empty($summary)) {
+            $html .= '        <div class="well well-lg">';
+            $html .= '          ' . $summary;
+            $html .= '        </div>';
+        }
         $html .= '        <div>';
         $html .= '          ' . $modListing;
         $html .= '        </div>';
@@ -725,7 +727,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $section = convert_to_array($sectionInfo->getIterator());
         $courseModules = explode(',', $section['sequence']);
         //Get the config data for the module
-        
+
 
         $labels = array();
 
@@ -805,7 +807,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                 } else {
                     $completion = '';
                 }
-                
+
                 //Only display if it is visible to the user
                 if ($thisModule->uservisible == true) {
                     if ($thisModule->modname == 'label') {
@@ -820,9 +822,8 @@ class format_glendon_renderer extends format_section_renderer_base {
                         }
                         $link = '<a href="' . $activity->url . '" ' . $onclick . '>'
                                 . $thisModule->get_formatted_name() . '</a>';
-                      
                     }
-                    $html .= '          <div class="format_glendon_content">' . $image . ' ' . $link . $hiddenFromStudents . $completion .  '</div>';
+                    $html .= '          <div class="format_glendon_content">' . $image . ' ' . $link . $hiddenFromStudents . $completion . '</div>';
                 }
             }
 
