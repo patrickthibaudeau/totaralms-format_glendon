@@ -786,8 +786,10 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $module = get_module_from_cmid($courseModulesByLabel[$z][$x]);
                 //Get simple module info
                 $thisModule = $modinfo->get_cm($courseModulesByLabel[$z][$x]);
+                
                 //Convert to array. Required to be able to get all information as not all get methods exist for the object
                 $thisModuleArray = convert_to_array($thisModule);
+                
                 //Keep this commented print_object. you will need it when you integrate completion info.
 //                print_object($thisModuleArray);
                 //Add note so that teacher knows it is hidden for students
@@ -817,10 +819,14 @@ class format_glendon_renderer extends format_section_renderer_base {
                         $image = '<img src="' . $thisModule->get_icon_url() . '" />';
                         if ($thisModule->onclick) {
                             $onclick = 'onclick="' . $thisModule->onclick . '"';
+                            $url = '#';
                         } else {
+//                            print_object($thisModuleArray);
                             $onclick = '';
+                            $url = $CFG->wwwroot .'/mod/' . $thisModuleArray['modname'] . '/view.php?id=' . $thisModuleArray['id'] ;
                         }
-                        $link = '<a href="' . $activity->url . '" ' . $onclick . '>'
+                        
+                        $link = '<a href="' . $url . '" ' . $onclick . '>'
                                 . $thisModule->get_formatted_name() . '</a>';
                     }
                     $html .= '          <div class="format_glendon_content">' . $image . ' ' . $link . $hiddenFromStudents . $completion . '</div>';
