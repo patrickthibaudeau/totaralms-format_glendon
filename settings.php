@@ -25,16 +25,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    //Bootstrap version being used in the Moodle theme. Default 2
-    $name = 'format_glendon/bootstrapversion';
-    $title = get_string('bootstrap_version', 'format_glendon');
-    $description = get_string('bootstrap_version_help', 'format_glendon');
-    $default = 2;
-    $choices = array(
-        2 => '2.x.x',
-        3 => '3.x.x'
-    );
-    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
     //Number of columns
     $name = 'format_glendon/numcolumns';
     $title = get_string('numcolumns', 'format_glendon');
@@ -63,7 +53,7 @@ if ($ADMIN->fulltree) {
     $name = 'format_glendon/tablabel';
     $title = get_string('tab_label', 'format_glendon');
     $description = get_string('tab_label_help', 'format_glendon');
-    $default = 25;
+    $default = 50;
     $settings->add(new admin_setting_configtext($name, $title, $description, $default));
     //Cover image
     $name = 'format_glendon/coverimage';
@@ -74,15 +64,4 @@ if ($ADMIN->fulltree) {
         'maxfiles' => 1,
         'accepted_types' => 'jpg,gif,png,svg'
     );
-    $settings->add(new admin_setting_configstoredfile($name, $title, $description, $filearea, 0, $options));
-    //Course title
-    $name = 'format_glendon/course_title';
-    $title = get_string('course_title', 'format_glendon');
-    $description = get_string('course_title_help', 'format_glendon');
-    $default = 1;
-    $choices = array(
-        1 => get_string('yes'),
-        0 => get_string('no'),
-    );
-    $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
 }

@@ -246,10 +246,6 @@ class format_glendon extends format_base {
                     'default' => $courseconfig->coursedisplay,
                     'type' => PARAM_INT,
                 ),
-                'bootstrapversion' => array(
-                    'default' => $glendoncourseconfig->bootstrapversion,
-                    'type' => PARAM_INT,
-                ),
                 'numcolumns' => array(
                     'default' => $glendoncourseconfig->numcolumns,
                     'type' => PARAM_INT,
@@ -260,10 +256,6 @@ class format_glendon extends format_base {
                 ),
                 'tablabel' => array(
                     'default' => $glendoncourseconfig->tablabel,
-                    'type' => PARAM_INT,
-                ),
-                'course_title' => array(
-                    'default' => $glendoncourseconfig->course_title,
                     'type' => PARAM_INT,
                 ),
                 'coverimage' => array(
@@ -285,7 +277,7 @@ class format_glendon extends format_base {
             $courseformatoptionsedit = array(
                 'numsections' => array(
                     'label' => new lang_string('numberweeks'),
-                    'element_type' => 'select',
+                    'element_type' => 'hidden',
                     'element_attributes' => array($sectionmenu),
                 ),
                 'hiddensections' => array(
@@ -310,18 +302,6 @@ class format_glendon extends format_base {
                     ),
                     'help' => 'coursedisplay',
                     'help_component' => 'moodle',
-                ),
-                'bootstrapversion' => array(
-                    'label' => new lang_string('bootstrap_version', 'format_glendon'),
-                    'element_type' => 'select',
-                    'element_attributes' => array(
-                        array(
-                            2 => '2.x.x',
-                            3 => '3.x.x'
-                        )
-                    ),
-                    'help' => 'bootstrap_version',
-                    'help_component' => 'format_glendon',
                 ),
                 'numcolumns' => array(
                     'label' => new lang_string('numcolumns', 'format_glendon'),
@@ -358,18 +338,6 @@ class format_glendon extends format_base {
                         'value' => $glendoncourseconfig->tablabel
                     ),
                     'help' => 'tab_label',
-                    'help_component' => 'format_glendon',
-                ),
-                'course_title' => array(
-                    'label' => new lang_string('course_title', 'format_glendon'),
-                    'element_type' => 'select',
-                    'element_attributes' => array(
-                        array(
-                            1 => get_string('yes'),
-                            0 => get_string('no'),
-                        )
-                    ),
-                    'help' => 'course_title',
                     'help_component' => 'format_glendon',
                 ),
                 'coverimage' => array(
@@ -414,10 +382,6 @@ class format_glendon extends format_base {
                     $element->addOption("$i", $i);
                 }
             }
-
-            $bootstrapversion = get_config('format_glendon', 'bootstrapversion');
-            $bootstrapversion = $mform->getElementValue('bootstrapversion');
-            $bootstrapversion = $bootstrapversion[0];
         }
         return $elements;
     }
@@ -506,63 +470,48 @@ class format_glendon extends format_base {
         //Will be used to determine if on front page or not
         $section = optional_param('section', 0, PARAM_INT);
         $url = $_SERVER['REQUEST_URI'];
-        
-        if (($editing == false) && ($id > 0) && strstr($url, 'mod') && !strstr($url,'adobeconnect/participants.php') && !strstr($url, 'course') && !strstr($url, 'quiz')) {
-            //Add font-awesome
-            echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">';
-            
+
+        if (($editing == false) && ($id > 0) && strstr($url, 'mod') && !strstr($url, 'adobeconnect/participants.php') && !strstr($url, 'course') && !strstr($url, 'quiz')) {
+
             $cm = get_course_and_cm_from_cmid($id);
             $cm = convert_to_array($cm);
             $sectionName = $this->get_section_name($cm[1]['sectionnum']);
             //Add link button back to section page
             echo '<a class="btn btn-success" title="' . $sectionName . '" href="' . $CFG->wwwroot . '/course/view.php?id=' . $cm[0]['id'] . '&section=' . $cm[1]['sectionnum'] . '"><i class="fa fa-chevron-left"></i> &nbsp;' . $sectionName . '</a>';
-        } else {
-            if ($config->course_title == true && $section == 0) {
-                if ($config->bootstrapversion == 3) {
-                    $class = 'col-md-12';
-                } else {
-                    $class = 'span12';
-                }
-                if ((!strstr($url, 'enrol')) && (!strstr($url, 'group'))  && (!strstr($url, 'admin')) && (!strstr($url, 'filter')) && (!strstr($url, 'report')) && (!strstr($url, 'grade')) && (!strstr($url, 'badges')) && (!strstr($url, 'backup')) && (!strstr($url, 'restore')) && (!strstr($url, 'question'))) {
-                    echo '<div class="' . $class . '" align="center" style="margin-bottom: 10px;">' . "\n";
-                    echo '<span class="glendon-course-title">' . $COURSE->fullname . '</span>';
-                    echo '</div>';
-                }
-            }
         }
     }
 
 }
 
-function format_glendon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function format_glendon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $DB;
-    
+
     if ($context->contextlevel != CONTEXT_COURSE) {
         return false;
     }
-    
+
     require_login();
-   
+
     if ($filearea != 'cover_image') {
         return false;
     }
-     
-    $itemid = (int)array_shift($args);
-    
-    
+
+    $itemid = (int) array_shift($args);
+
+
     $fs = get_file_storage();
     $filename = array_pop($args);
-    
+
     if (empty($args)) {
         $filepath = '/';
     } else {
-        $filepath = '/'.implode('/', $args).'/';
+        $filepath = '/' . implode('/', $args) . '/';
     }
-    
+
     $file = $fs->get_file($context->id, 'format_glendon', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
         return false;
     }
-    
+
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }

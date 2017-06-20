@@ -25,7 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016090400;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2015111000;        // Requires this Moodle version.
+
+$plugin->version   = 2017062000;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2017051500;        // Requires this Moodle version.
 $plugin->component = 'format_glendon';    // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_RC;

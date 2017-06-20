@@ -354,7 +354,6 @@ class format_glendon_renderer extends format_section_renderer_base {
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
         $context = context_course::instance($course->id);
-        $bootstrapVersion = $course->bootstrapversion;
         //Redirect to highlighted section
         @$this->redirect_highlighted_section($course);
 
@@ -380,15 +379,15 @@ class format_glendon_renderer extends format_section_renderer_base {
             $out[] = '<img class="img-responsive" src="' . $CFG->wwwroot . '/pluginfile.php/' . $file->get_contextid() . '/format_glendon/cover_image/' . $file->get_itemid() . '/' . $filename . '" alt="' . $filename . '">';
         }
         if (isset($out[1])) {
-            echo $this->print_section_row_start($bootstrapVersion);
+            echo $this->print_section_row_start();
             echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
             echo $out[1];
             echo html_writer::end_tag('div');
             echo $this->print_section_row_end();
         }
         //***************** Print section 0 also known as start here ************
-        echo $this->print_section_row_start($bootstrapVersion);
-        echo $this->print_start_here($bootstrapVersion, $course);
+        echo $this->print_section_row_start();
+        echo $this->print_start_here($course);
         echo $this->print_section_row_end();
 
         //********************* Print out course sections ***********************
@@ -404,8 +403,8 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         //Print all other sections
         for ($i = 0; $i < $numberOfRows; $i++) {
-            echo $this->print_section_row_start($bootstrapVersion);
-            echo $this->print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $i, $course, $printableSections);
+            echo $this->print_section_row_start();
+            echo $this->print_section_columns($numberOfSections, $numberOfColumns, $i, $course, $printableSections);
             echo $this->print_section_row_end();
         }
 
@@ -475,7 +474,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param stdClass $course
      * @return string HTML
      */
-    protected function print_section_columns($bootstrapVersion, $numberOfSections, $numberOfColumns, $rowNumber, $course, $printableSections) {
+    protected function print_section_columns($numberOfSections, $numberOfColumns, $rowNumber, $course, $printableSections) {
         global $CFG, $PAGE;
 
         $rowStartSectionNumber = ($rowNumber * $numberOfColumns) + 1;
@@ -483,11 +482,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         $modinfo = get_fast_modinfo($course);
         $html = '';
 
-        if ($bootstrapVersion == 3) {
-            $columnClass = 'col-md-' . $bootstrapColumnNumber;
-        } else {
-            $columnClass = 'span' . $bootstrapColumnNumber;
-        }
+        $columnClass = 'col-md-' . $bootstrapColumnNumber;
+
         //Get section number according to row start;
         $thisSection = $rowStartSectionNumber;
         for ($i = 1; $i <= $numberOfColumns; $i++) {
@@ -509,14 +505,9 @@ class format_glendon_renderer extends format_section_renderer_base {
         return $html;
     }
 
-    protected function print_section_row_start($bootstrapVersion) {
+    protected function print_section_row_start() {
 
-        $rowClass = 'row-fluid';
-        if ($bootstrapVersion == 3) {
-            $rowClass = 'row';
-        }
-
-        $html = html_writer::start_tag('div', array('class' => $rowClass));
+        $html = html_writer::start_tag('div', array('class' => 'row'));
 
         echo $html;
     }
@@ -536,7 +527,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param stdClass $course
      * @return type
      */
-    protected function print_start_here($bootstrapVersion, $course) {
+    protected function print_start_here($course) {
         global $CFG, $PAGE;
 
         $modinfo = get_fast_modinfo($course);
@@ -547,15 +538,10 @@ class format_glendon_renderer extends format_section_renderer_base {
         $sectionName = get_section_name($course, $sectionInfo);
         $collapsed = $course->collapsed;
 
-        if ($bootstrapVersion == 3) {
-            $columnClass = 'col-md-12';
-            $btnClass = 'btn btn-lg btn-success';
-            $collapse = $this->print_bootstrap3_collapse($sectionName, $summary, $modList, $collapsed);
-        } else {
-            $columnClass = 'span12';
-            $btnClass = 'btn btn-large';
-            $collapse = $this->print_bootstrap2_collapse($sectionName, $summary, $modList, $collapsed);
-        }
+        $columnClass = 'col-md-12';
+        $btnClass = 'btn btn-lg btn-success';
+        $collapse = $this->print_bootstrap3_collapse($sectionName, $summary, $modList, $collapsed);
+
         //Only need one column
         $html = html_writer::start_tag('div', array('class' => $columnClass));
         $html .= $collapse;
@@ -578,17 +564,17 @@ class format_glendon_renderer extends format_section_renderer_base {
             $in = '';
         }
 
-        $html = '<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">';
-        $html .= '  <div class="panel panel-success">';
-        $html .= '    <div class="panel-heading" role="tab" id="headingOne">';
-        $html .= '      <h4 class="panel-title">';
-        $html .= '        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
+        $html = '<div id="accordion" role="tablist" aria-multiselectable="true">';
+        $html .= '  <div class="card">';
+        $html .= '    <div class="card-header" role="tab" id="headingOne">';
+        $html .= '      <h5 class="mb-0">';
+        $html .= '        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
         $html .= '          ' . $sectionName;
         $html .= '        </a>';
-        $html .= '      </h4>';
+        $html .= '      </h5>';
         $html .= '    </div>';
         $html .= '    <div id="collapseOne" class="panel-collapse collapse ' . $in . '" role="tabpanel" aria-labelledby="headingOne">';
-        $html .= '      <div class="panel-body">';
+        $html .= '      <div class="card-block">';
         if (!empty($summary)) {
             $html .= '        <div class="well well-lg">';
             $html .= '          ' . $summary;
@@ -597,41 +583,6 @@ class format_glendon_renderer extends format_section_renderer_base {
         $html .= '        <div>';
         $html .= '          ' . $modListing;
         $html .= '        </div>';
-        $html .= '      </div>';
-        $html .= '    </div>';
-        $html .= '  </div>';
-        $html .= '</div>';
-
-        return $html;
-    }
-
-    /**
-     * return string HTML for Bootstrap 2 collapsable
-     * @param string $sectionName
-     * @param string $summary
-     * @param string $modListing
-     * @return string
-     */
-    protected function print_bootstrap2_collapse($sectionName, $summary, $modListing, $collapsed) {
-
-        $in = 'in';
-        if ($collapsed == 1) {
-            $in = '';
-        }
-
-        $html = '<div class="accordion" id="accordion2">';
-        $html .= '  <div class="accordion-group">';
-        $html .= '    <div class="accordion-heading">';
-        $html .= '      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">';
-        $html .= '        ' . $sectionName;
-        $html .= '      </a>';
-        $html .= '    </div>';
-        $html .= '    <div id="collapseOne" class="accordion-body collapse ' . $in . '">';
-        $html .= '      <div class="accordion-inner">';
-        $html .= '        <div class="well">';
-        $html .= '          ' . $summary;
-        $html .= '        </div>';
-        $html .= '        ' . $modListing;
         $html .= '      </div>';
         $html .= '    </div>';
         $html .= '  </div>';
@@ -916,7 +867,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             }
         }
 
-        $o.= html_writer::start_tag('li', array('id' => 'section-' . $section->section,
+        $o .= html_writer::start_tag('li', array('id' => 'section-' . $section->section,
                     'class' => 'section main clearfix' . $sectionstyle, 'role' => 'region',
                     'aria-label' => get_section_name($course, $section)));
 
@@ -924,11 +875,11 @@ class format_glendon_renderer extends format_section_renderer_base {
         $o .= html_writer::tag('span', $this->section_title($section, $course), array('class' => 'hidden sectionname'));
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
-        $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
+        $o .= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
 
         $rightcontent = $this->section_right_content($section, $course, $onsectionpage);
-        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
-        $o.= html_writer::start_tag('div', array('class' => 'content'));
+        $o .= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
+        $o .= html_writer::start_tag('div', array('class' => 'content'));
 
         // When not on a section page, we display the section titles except the general section if null
         $hasnamenotsecpg = (!$onsectionpage && ($section->section != 0 || !is_null($section->name)));
@@ -941,7 +892,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $classes = '';
         }
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
-        $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
+        $o .= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
 
         $context = context_course::instance($course->id);
         $o .= $this->section_availability_message($section, has_capability('moodle/course:viewhiddensections', $context));
