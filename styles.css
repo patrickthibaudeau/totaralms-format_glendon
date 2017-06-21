@@ -104,7 +104,32 @@
 
 
 .glendon-course-title {
-    
+
     font-size: 40px;
     /*letter-spacing: 1px;*/
 } 
+
+.nav-tabs .nav-item {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+    padding-top: 10px !important;
+    padding-botom: 10px !important;
+    margin-bottom: 0px !important;
+    
+    
+}
+
+.nav-tabs .nav-item .active {
+    background-color: #999;
+}
+
+.nav-tabs .nav-item + .nav-item {
+    margin-left: 0rem !important;
+}
+
+.nav-item .glendon_format_tabs {
+    padding: 10px, 25px, 10px, 25px !important;
+}
+.format_glendon_tab_content li {
+    list-style-type: none;
+}

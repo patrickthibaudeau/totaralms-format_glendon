@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/format/renderer.php');
 
+
 /**
  * Basic renderer for glendon format.
  *
@@ -170,7 +171,6 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
-        $bootstrapVersion = $course->bootstrapversion;
 
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
@@ -216,11 +216,8 @@ class format_glendon_renderer extends format_section_renderer_base {
             echo html_writer::end_tag('div');
         }
 
-        if ($course->bootstrapversion == 2) {
-            echo html_writer::start_tag('div', array('class' => 'row-fluid', 'style' => 'margin-top: 15px;'));
-        } else {
-            echo html_writer::start_tag('div', array('class' => 'row', 'style' => 'margin-top: 15px;'));
-        }
+        echo html_writer::start_tag('div', array('class' => 'row', 'style' => 'margin-top: 15px;'));
+
 
         //$cmList = $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
         //This following code is required to find out if there are any modules within the section
@@ -229,27 +226,19 @@ class format_glendon_renderer extends format_section_renderer_base {
         //Start two column container. Left for menu, right for content
         //
         //************ LEFT MENU***********************
-        if ($course->bootstrapversion == 2) {
-            echo html_writer::start_tag('div', array('class' => 'span4'));
-        } else {
-            echo html_writer::start_tag('div', array('class' => 'col-md-4'));
-        }
-
+        echo html_writer::start_tag('div', array('class' => 'col-md-4'));
         echo $this->print_course_menu($course, $displaysection);
 
         echo html_writer::end_tag('div');
         //****************** END LEFT MENU**************
         //
         //****************** CONTENTS ******************
-        if ($course->bootstrapversion == 2) {
-            echo html_writer::start_tag('div', array('class' => 'span8'));
-        } else {
-            echo html_writer::start_tag('div', array('class' => 'col-md-8'));
-        }
+        echo html_writer::start_tag('div', array('class' => 'col-md-8'));
+
         //Only print tabs if there are labels
         if ($courseModules != null) {
-            echo @$this->print_bootstrap3_tab_list($course, $displaysection);
-            echo @$this->print_bootstrap3_tab_divs($course, $displaysection);
+            echo @$this->print_bootstrap_tab_list($course, $displaysection);
+            echo @$this->print_bootstrap_tab_divs($course, $displaysection);
         }
         echo html_writer::end_tag('div'); //Row
         echo html_writer::end_tag('div');
@@ -540,7 +529,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         $columnClass = 'col-md-12';
         $btnClass = 'btn btn-lg btn-success';
-        $collapse = $this->print_bootstrap3_collapse($sectionName, $summary, $modList, $collapsed);
+        $collapse = $this->print_bootstrap_collapse($sectionName, $summary, $modList, $collapsed);
 
         //Only need one column
         $html = html_writer::start_tag('div', array('class' => $columnClass));
@@ -557,7 +546,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param string $modListing
      * @return string
      */
-    protected function print_bootstrap3_collapse($sectionName, $summary, $modListing, $collapsed) {
+    protected function print_bootstrap_collapse($sectionName, $summary, $modListing, $collapsed) {
 
         $in = 'in';
         if ($collapsed == 1) {
@@ -591,7 +580,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         return $html;
     }
 
-    protected function get_bootstrap3_button_style() {
+    protected function get_bootstrap_button_style() {
         $styles = array(
             'btn-success' => 'btn-success',
             'btn-warning' => 'btn-warning',
@@ -611,7 +600,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param strings $class
      * @return string
      */
-    protected function print_bootstrap3_tab_list($course, $displaysection, $class = 'glendon_format') {
+    protected function print_bootstrap_tab_list($course, $displaysection, $class = 'glendon_format_tabs') {
         global $CFG, $DB;
 
         //Get course modules
@@ -633,15 +622,17 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $thisModule = $modinfo->cms[$value];
                 $thisModuleArray = convert_to_array($thisModule);
                 if ($thisModuleArray['modname'] == 'label') {
-                    $labelName = $thisModule->get_formatted_name();
+//                    $labelName = $thisModule->get_formatted_name();
+                    preg_match("#<\s*?h3\b[^>]*>(.*?)</h3\b[^>]*>#s",$thisModule->get_formatted_content(),$matches);
+                    $labelName = strip_tags($matches[1]);
                     //If lentgh is more than 25 Characters cut the label
-                    if (strlen($labelName) < $course->tablabel) {
+                    if ($labelName != '') {
                         if ($i != 0) {
-                            $activeClass = 'class="' . $class . '"';
+                            $activeClass = 'class="nav-item ' . $class . '"';
                         } else {
-                            $activeClass = 'class="' . $class . ' active' . '"';
+                            $activeClass = 'class="nav-item ' . $class . ' active' . '"';
                         }
-                        $label .= '    <li role="presentation" ' . $activeClass . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $labelName . '</a></li> ';
+                        $label .= '    <li ' . $activeClass . '><a href="#tab' . $i . '" aria-controls="tab' . $i . '" role="tab" data-toggle="tab">' . $labelName . '</a></li> ';
 
                         $i++;
                     }
@@ -669,16 +660,19 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param type $displaysection
      * @return string
      */
-    protected function print_bootstrap3_tab_divs($course, $displaysection) {
-        global $CFG, $DB, $OUTPUT;
+    protected function print_bootstrap_tab_divs($course, $displaysection) {
+        global $CFG, $DB, $OUTPUT, $PAGE;
         include_once($CFG->dirroot . '/question/editlib.php');
+        include_once($CFG->dirroot . '/course/renderer.php');
+        
+        $courseRenderer = new core_course_renderer($PAGE);
 
         $modinfo = get_fast_modinfo($course->id);
         $sectionInfo = $modinfo->get_section_info($displaysection);
         $section = convert_to_array($sectionInfo->getIterator());
         $courseModules = explode(',', $section['sequence']);
         //Get the config data for the module
-
+        $completioninfo = new completion_info($course);
 
         $labels = array();
 
@@ -737,51 +731,13 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $module = get_module_from_cmid($courseModulesByLabel[$z][$x]);
                 //Get simple module info
                 $thisModule = $modinfo->get_cm($courseModulesByLabel[$z][$x]);
+               
                 
                 //Convert to array. Required to be able to get all information as not all get methods exist for the object
                 $thisModuleArray = convert_to_array($thisModule);
-                
-                //Keep this commented print_object. you will need it when you integrate completion info.
-//                print_object($thisModuleArray);
-                //Add note so that teacher knows it is hidden for students
-                if ($thisModuleArray['visible'] == true) {
-                    $hiddenFromStudents = '';
-                } else {
-                    $hiddenFromStudents = ' <span class="badge">' . get_string('hidden', 'format_glendon') . '</span>';
-                }
+                $mod = $modinfo->cms[$thisModuleArray[id]];
 
-                //Completion information
-                if ($thisModuleArray['completionview'] == true) {
-                    if ($thisModuleArray['completion'] == true) {
-                        $completion = '<i class="glyphicon glyphicon-check format_glendon_complete"></i>';
-                    } else {
-                        $completion = '';
-                    }
-                } else {
-                    $completion = '';
-                }
-
-                //Only display if it is visible to the user
-                if ($thisModule->uservisible == true) {
-                    if ($thisModule->modname == 'label') {
-                        $image = '';
-                        $link = $thisModule->get_formatted_content();
-                    } else {
-                        $image = '<img src="' . $thisModule->get_icon_url() . '" />';
-                        if ($thisModule->onclick) {
-                            $onclick = 'onclick="' . $thisModule->onclick . '"';
-                            $url = '#';
-                        } else {
-//                            print_object($thisModuleArray);
-                            $onclick = '';
-                            $url = $CFG->wwwroot .'/mod/' . $thisModuleArray['modname'] . '/view.php?id=' . $thisModuleArray['id'] ;
-                        }
-                        
-                        $link = '<a href="' . $url . '" ' . $onclick . '>'
-                                . $thisModule->get_formatted_name() . '</a>';
-                    }
-                    $html .= '          <div class="format_glendon_content">' . $image . ' ' . $link . $hiddenFromStudents . $completion . '</div>';
-                }
+                $html .= $courseRenderer->course_section_cm_list_item($course, $completioninfo, $mod, null, null);
             }
 
             $html .= '              </div> ';
@@ -899,5 +855,4 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         return $o;
     }
-
 }
