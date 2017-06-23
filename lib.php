@@ -254,10 +254,6 @@ class format_glendon extends format_base {
                     'default' => $glendoncourseconfig->collapsed,
                     'type' => PARAM_INT,
                 ),
-                'tablabel' => array(
-                    'default' => $glendoncourseconfig->tablabel,
-                    'type' => PARAM_INT,
-                ),
                 'coverimage' => array(
                     'default' => $glendoncourseconfig->coverimage,
                     'type' => PARAM_FILE,
@@ -329,15 +325,6 @@ class format_glendon extends format_base {
                         )
                     ),
                     'help' => 'collapsed',
-                    'help_component' => 'format_glendon',
-                ),
-                'tablabel' => array(
-                    'label' => new lang_string('tab_label', 'format_glendon'),
-                    'element_type' => 'text',
-                    'element_attributes' => array(
-                        'value' => $glendoncourseconfig->tablabel
-                    ),
-                    'help' => 'tab_label',
                     'help_component' => 'format_glendon',
                 ),
                 'coverimage' => array(
@@ -477,7 +464,7 @@ class format_glendon extends format_base {
             $cm = convert_to_array($cm);
             $sectionName = $this->get_section_name($cm[1]['sectionnum']);
             //Add link button back to section page
-            echo '<a class="btn btn-success" title="' . $sectionName . '" href="' . $CFG->wwwroot . '/course/view.php?id=' . $cm[0]['id'] . '&section=' . $cm[1]['sectionnum'] . '"><i class="fa fa-chevron-left"></i> &nbsp;' . $sectionName . '</a>';
+//            echo '<a class="btn btn-success" title="' . $sectionName . '" href="' . $CFG->wwwroot . '/course/view.php?id=' . $cm[0]['id'] . '&section=' . $cm[1]['sectionnum'] . '"><i class="fa fa-chevron-left"></i> &nbsp;' . $sectionName . '</a>';
         }
     }
 

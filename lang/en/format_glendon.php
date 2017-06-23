@@ -50,3 +50,6 @@ $string['page-course-view-glendon'] = 'Any course main page in glendon format';
 $string['page-course-view-glendon-x'] = 'Any course page in glendon format';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
+//New tags
+$string['access'] = 'Access';
+$string['toggle_course_menu'] = 'Toggle course menu';

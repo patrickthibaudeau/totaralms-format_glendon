@@ -109,27 +109,52 @@
     /*letter-spacing: 1px;*/
 } 
 
-.nav-tabs .nav-item {
-    padding-left: 25px !important;
-    padding-right: 25px !important;
-    padding-top: 10px !important;
-    padding-botom: 10px !important;
-    margin-bottom: 0px !important;
-    
-    
-}
-
-.nav-tabs .nav-item .active {
-    background-color: #999;
-}
-
-.nav-tabs .nav-item + .nav-item {
-    margin-left: 0rem !important;
-}
-
-.nav-item .glendon_format_tabs {
-    padding: 10px, 25px, 10px, 25px !important;
-}
 .format_glendon_tab_content li {
     list-style-type: none;
+}
+
+/*#course-menu-toggle{
+    color: #fff;
+}*/
+
+/*Best image resolution 555px x 185px*/
+.course-page-img {
+    background-color: #333;
+    max-height:185px;
+}
+
+#course-menu-toggle{
+    color: #fff;
+}
+
+.topic-text {
+    background-color:#0073b7;
+    color:#fff;
+    display:inline-block;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.topic-text-filler {
+    padding-left: 15px;
+    padding-right: 60rem;
+}
+.arrow {
+    border-style: dashed;
+    border-color: transparent;
+    border-width: 0.20em;
+    display: -moz-inline-box;
+    display: inline-block;
+    /* Use font-size to control the size of the arrow. */
+    font-size: 100px;
+    height: 0;
+    line-height: 0;
+    position: relative;
+    vertical-align: middle;
+    width: 0;
+    background-color:#fff; /* change background color acc to bg color */ 
+    border-left-width: 0.2em;
+    border-left-style: solid;
+    border-left-color: #0073b7;
+    left:0.25em;
 }
