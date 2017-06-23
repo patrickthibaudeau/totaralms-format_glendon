@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
+$table_contents = optional_param('table_contents', 0, PARAM_INT);
 
 // Horrible backwards compatible parameter aliasing..
 if ($glendon = optional_param('glendon', 0, PARAM_INT)) {
@@ -60,6 +61,8 @@ if (!empty($displaysection)) {
     }
 } else {
     if ($PAGE->user_is_editing()) {
+        $renderer->print_multiple_section_page($course, null, null, null, null);
+    } else if ($table_contents == 1) {
         $renderer->print_multiple_section_page($course, null, null, null, null);
     } else {
         $renderer->print_course_front_page($course, null, null, null, null);
