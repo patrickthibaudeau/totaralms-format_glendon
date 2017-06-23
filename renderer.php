@@ -205,8 +205,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         if (!$thissection->visible) {
             $classes .= ' dimmed_text';
         }
-        $sectiontitle .= '<span class="topic-text-filler" ><a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="active"><i class="fa fa-minus"></i></a></span>';
-        $sectiontitle .=  get_section_name($course, $displaysection) . '<span class="arrow"></span>';
+        $sectiontitle .= '<span class="pull-left ><a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="active"><i class="fa fa-minus"></i></a></span>';
+        $sectiontitle .=  get_section_name($course, $displaysection);
 //        $sectionname = html_writer::tag('span', get_section_name($course, $displaysection));
 //        $sectiontitle .= $this->output->heading($sectionname, 3, $classes) . '<span class="arrow"></span>';
 //        
