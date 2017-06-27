@@ -443,31 +443,6 @@ class format_glendon extends format_base {
         return true;
     }
 
-    /**
-     * Header information containing back button
-     * @global stdClass $CFG
-     * @global moodle_course $COURSE
-     */
-    public function course_content_header() {
-        global $CFG, $COURSE, $PAGE;
-        $editing = $PAGE->user_is_editing();
-        $id = optional_param('id', 0, PARAM_INT);
-        //Get course config;
-        $config = course_get_format($COURSE)->get_course();
-        //Will be used to determine if on front page or not
-        $section = optional_param('section', 0, PARAM_INT);
-        $url = $_SERVER['REQUEST_URI'];
-
-        if (($editing == false) && ($id > 0) && strstr($url, 'mod') && !strstr($url, 'adobeconnect/participants.php') && !strstr($url, 'course') && !strstr($url, 'quiz')) {
-
-            $cm = get_course_and_cm_from_cmid($id);
-            $cm = convert_to_array($cm);
-            $sectionName = $this->get_section_name($cm[1]['sectionnum']);
-            //Add link button back to section page
-//            echo '<a class="btn btn-success" title="' . $sectionName . '" href="' . $CFG->wwwroot . '/course/view.php?id=' . $cm[0]['id'] . '&section=' . $cm[1]['sectionnum'] . '"><i class="fa fa-chevron-left"></i> &nbsp;' . $sectionName . '</a>';
-        }
-    }
-
 }
 
 function format_glendon_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
