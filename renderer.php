@@ -205,7 +205,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         if (!$thissection->visible) {
             $classes .= ' dimmed_text';
         }
-        $sectiontitle .= '<span class="pull-left ><a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="active"><i class="fa fa-minus"></i></a></span>';
+        $sectiontitle .= '<span class="pull-left ><a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="active"><i class="fa fa-window-minimize"></i></a></span>';
         $sectiontitle .=  get_section_name($course, $displaysection);
 //        $sectionname = html_writer::tag('span', get_section_name($course, $displaysection));
 //        $sectiontitle .= $this->output->heading($sectionname, 3, $classes) . '<span class="arrow"></span>';
@@ -577,9 +577,9 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         $html = '<div id="accordion" role="tablist" aria-multiselectable="true">';
         $html .= '  <div class="card">';
-        $html .= '    <div class="card-header" role="tab" id="headingOne">';
+        $html .= '    <div class="card-header  bg-teal" role="tab" id="headingOne">';
         $html .= '      <h5 class="mb-0">';
-        $html .= '        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
+        $html .= '        <a data-toggle="collapse" data-parent="#accordion" style="color: #fff;" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
         $html .= '          ' . $sectionName;
         $html .= '        </a>';
         $html .= '      </h5>';
