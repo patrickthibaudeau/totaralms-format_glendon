@@ -577,7 +577,7 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         $html = '<div id="accordion" role="tablist" aria-multiselectable="true">';
         $html .= '  <div class="card">';
-        $html .= '    <div class="card-header  bg-teal" role="tab" id="headingOne">';
+        $html .= '    <div class="card-header  bg-green" role="tab" id="headingOne">';
         $html .= '      <h5 class="mb-0">';
         $html .= '        <a data-toggle="collapse" data-parent="#accordion" style="color: #fff;" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
         $html .= '          ' . $sectionName;
