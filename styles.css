@@ -117,10 +117,15 @@
     color: #fff;
 }*/
 
+.course-page-img {
+    width: 100%;
+    max-height: 185px !important;
+}
+
 /*Best image resolution 555px x 185px*/
 .course-page-img {
     background-color: #333;
-    max-height:185px;
+    max-height:185px !important;
 }
 
 #course-menu-toggle{
