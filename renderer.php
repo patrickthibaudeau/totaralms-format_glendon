@@ -645,7 +645,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $thisModuleArray = convert_to_array($thisModule);
                 if ($thisModuleArray['modname'] == 'label') {
 //                    $labelName = $thisModule->get_formatted_name();
-                    preg_match("#<\s*?h3\b[^>]*>(.*?)</h3\b[^>]*>#s", $thisModule->get_formatted_content(), $matches);
+                    preg_match("#<\s*?h2\b[^>]*>(.*?)</h2\b[^>]*>#s", $thisModule->get_formatted_content(), $matches);
                     $labelName = strip_tags($matches[1]);
                     //If lentgh is more than 25 Characters cut the label
                     if ($labelName != '') {
@@ -717,7 +717,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $thisModuleInfo = $thisModule->get_course_module_record();
             $thisModuleArray = convert_to_array($thisModule);
             if ($thisModuleArray['modname'] == 'label') {
-                preg_match("#<\s*?h3\b[^>]*>(.*?)</h3\b[^>]*>#s", $thisModule->get_formatted_content(), $matches);
+                preg_match("#<\s*?h2\b[^>]*>(.*?)</h2\b[^>]*>#s", $thisModule->get_formatted_content(), $matches);
                 if (!isset($matches[1])) {
                     $x++;
                     $courseModulesByLabel[$i][$x] = $thisModuleInfo->id;
