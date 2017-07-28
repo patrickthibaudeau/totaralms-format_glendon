@@ -168,10 +168,10 @@ class format_glendon_renderer extends format_section_renderer_base {
      */
     public function print_glendon_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
         global $CFG, $PAGE;
-
+           
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
-
+        
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
             // This section doesn't exist
@@ -643,7 +643,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             foreach ($courseModules as $key => $value) {
                 $thisModule = $modinfo->cms[$value];
                 $thisModuleArray = convert_to_array($thisModule);
-                if ($thisModuleArray['modname'] == 'label') {
+                if ($thisModuleArray['modname'] == 'label' && $thisModuleArray['deletioninprogress'] == 0) {
 //                    $labelName = $thisModule->get_formatted_name();
                     preg_match("#<\s*?h2\b[^>]*>(.*?)</h2\b[^>]*>#s", $thisModule->get_formatted_content(), $matches);
                     $labelName = strip_tags($matches[1]);
