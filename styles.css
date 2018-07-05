@@ -139,3 +139,7 @@
     padding: 15px;
     text-align: center;
 }
+
+.bg-green {
+    background-color: #00688D !important;
+}

@@ -687,7 +687,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         include_once($CFG->dirroot . '/question/editlib.php');
         include_once($CFG->dirroot . '/course/renderer.php');
 
-        $courseRenderer = new core_course_renderer($PAGE);
+        $courseRenderer = new core_course_renderer($PAGE, '');
 
         $modinfo = get_fast_modinfo($course->id);
         $sectionInfo = $modinfo->get_section_info($displaysection);
