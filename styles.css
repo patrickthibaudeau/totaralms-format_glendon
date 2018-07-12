@@ -124,11 +124,6 @@
     max-height:185px !important;
 }
 
-#course-menu-toggle{
-    color: #fff;
-    cursor: pointer;
-}
-
 .topic-text {
     width: 100%;
     background-color: #004b8d;
@@ -138,6 +133,11 @@
     font-weight: bold;
     padding: 15px;
     text-align: center;
+}
+
+.topic-text  a {
+    color: #fff !important;
+    font-size: 0.9em !important;
 }
 
 .bg-green {
@@ -161,4 +161,12 @@
         margin-bottom: 0 !important;
         margin-left: 15px !important;
     }
+}
+
+/*
+Tabs
+*/
+
+.tab-content {
+    margin-top: -11px;
 }

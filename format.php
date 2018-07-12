@@ -71,6 +71,6 @@ if (!empty($displaysection)) {
 
 // Include course format js module
 $PAGE->requires->js('/course/format/glendon/format.js');
-$PAGE->requires->js('/course/format/glendon/jquery/glendon/glendon.js');
+$PAGE->requires->js_call_amd('format_glendon/format', 'init');
 
 
