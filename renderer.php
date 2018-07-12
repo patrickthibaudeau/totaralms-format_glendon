@@ -46,7 +46,6 @@ class format_glendon_renderer extends format_section_renderer_base {
         // Since format_glendon_renderer::section_edit_controls() only displays the 'Set current section' control when editing mode is on
         // we need to be sure that the link 'Turn editing mode on' is available for a user who does not have any other managing capability.
         $page->set_other_editing_capability('moodle/course:setcurrentsection');
-       
     }
 
     /**
@@ -70,7 +69,8 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @return string HTML to output.
      */
     protected function start_section_div() {
-        return html_writer::start_tag('div', array('class' => 'container-fluid'));
+//        return html_writer::start_tag('div', array('class' => 'container-fluid'));
+        return html_writer::start_tag('div', []);
     }
 
     /**
@@ -168,10 +168,10 @@ class format_glendon_renderer extends format_section_renderer_base {
      */
     public function print_glendon_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
         global $CFG, $PAGE;
-           
+
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
-        
+
         // Can we view the section in question?
         if (!($sectioninfo = $modinfo->get_section_info($displaysection))) {
             // This section doesn't exist
@@ -206,11 +206,8 @@ class format_glendon_renderer extends format_section_renderer_base {
             $classes .= ' dimmed_text';
         }
         $sectiontitle .= '<span class="pull-left ><a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="active"><i class="fa fa-window-minimize"></i></a></span>';
-        $sectiontitle .=  get_section_name($course, $displaysection);
-//        $sectionname = html_writer::tag('span', get_section_name($course, $displaysection));
-//        $sectiontitle .= $this->output->heading($sectionname, 3, $classes) . '<span class="arrow"></span>';
-//        
-//        $sectiontitle .= html_writer::end_tag('span');
+        $sectiontitle .= get_section_name($course, $displaysection);
+
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
         //If there is a section summary, print it here
@@ -243,8 +240,8 @@ class format_glendon_renderer extends format_section_renderer_base {
             echo @$this->print_bootstrap_tab_divs($course, $displaysection);
         }
 
-        echo html_writer::end_tag('div'); 
-        
+        echo html_writer::end_tag('div');
+
         echo html_writer::end_tag('div'); //Row
         //*******************END CONTENTS ****************
         // Now the list of sections..
@@ -372,16 +369,17 @@ class format_glendon_renderer extends format_section_renderer_base {
             $out[] = '<img class="img-responsive" src="' . $CFG->wwwroot . '/pluginfile.php/' . $file->get_contextid() . '/format_glendon/cover_image/' . $file->get_itemid() . '/' . $filename . '" alt="' . $filename . '">';
         }
         if (isset($out[1])) {
-            echo $this->print_section_row_start();
-            echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
+//            echo $this->print_section_row_start();
+//            echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
+            echo html_writer::start_tag('div', array('align' => 'center', 'style' => 'margin-bottom: 5px;'));
             echo $out[1];
             echo html_writer::end_tag('div');
-            echo $this->print_section_row_end();
+//            echo $this->print_section_row_end();
         }
         //***************** Print section 0 also known as start here ************
-        echo $this->print_section_row_start();
+//        echo $this->print_section_row_start();
         echo $this->print_start_here($course);
-        echo $this->print_section_row_end();
+//        echo $this->print_section_row_end();
 
         //********************* Print out course sections ***********************
         //Get printable sections
@@ -396,9 +394,9 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         //Print all other sections
         for ($i = 0; $i < $numberOfRows; $i++) {
-            echo $this->print_section_row_start();
+//            echo $this->print_section_row_start();
             echo $this->print_section_columns($numberOfSections, $numberOfColumns, $i, $course, $printableSections);
-            echo $this->print_section_row_end();
+//            echo $this->print_section_row_end();
         }
 
         echo $this->end_section_div();
@@ -479,39 +477,43 @@ class format_glendon_renderer extends format_section_renderer_base {
 
         //Get section number according to row start;
         $thisSection = $rowStartSectionNumber;
+        $html .= html_writer::start_tag('div', array('class' => 'card-deck', 'style' => 'margin-top: 15px;'));
         for ($i = 1; $i <= $numberOfColumns; $i++) {
-            $html .= html_writer::start_tag('div', array('class' => $columnClass));
+
             if (isset($printableSections[$thisSection])) {
                 if ($sectionInfo = $modinfo->get_section_info($printableSections[$thisSection])) {
                     $summary = $this->format_summary_text($sectionInfo);
                     preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $summary, $result);
                     if (isset($result[0])) {
-                        $image = $result[0] . ' class="card-image-bottom img-responsive course-page-image" alt="Image"/>';
+                        $image = $result[0] . ' class="card-image-top"  style="height: 160px; width: 100%; object-fit: cover" alt="Image"/>';
                     } else {
                         $image = '';
                     }
                     $html .= '<div class="card">';
-                    $html .= '  <div class="card-block">';
-                    $html .= '      <h4 class="card-title">';
+                    if (isset($result[0])) {  
+                        $html .= '          <a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
+                            . '  title="' . get_section_name($course, $sectionInfo) . '">';
+                        $html .= $image;
+                        $html .= '</a>';
+                    }
+                    $html .= '  <div class="card-body">';
+                    $html .= '      <h5 class="card-title">';
                     $html .= '          <a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
                             . '  title="' . get_section_name($course, $sectionInfo) . '">'
                             . get_section_name($course, $sectionInfo) . '</a>';
-                    $html .= '      </h4>';
-//                    $html .= '          <a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
-//                            . '  title="' . get_string('access', 'format_glendon') . '" class="btn btn-primary">'
-//                            . get_string('access', 'format_glendon') . '</a>';
+                    $html .= '      </h5>';
+                    $summary = preg_replace("/<img[^>]+\>/i", "", $summary);;
+                    $html .= '<p class="card-text">' . $summary . '</p>';
                     $html .= '  </div>';
-                    if (isset($result[0])) {
-                        $html .= '  <div class=course-page-img>';
-                        $html .= $image;
-                        $html .= '</div>';
-                    }
+                    
                     $html .= '</div>';
                     $thisSection++;
                 }
             }
-            $html .= html_writer::end_tag('div');
         }
+        $html .= html_writer::end_tag('div');
+        
+
 
         return $html;
     }
@@ -524,8 +526,7 @@ class format_glendon_renderer extends format_section_renderer_base {
     }
 
     protected function print_section_row_end() {
-
-        $html = html_writer::end_tag('div');
+        $html = html_writer::end_tag('div'); //Row
 
         echo $html;
     }
@@ -554,7 +555,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         $collapse = $this->print_bootstrap_collapse($sectionName, $summary, $modList, $collapsed);
 
         //Only need one column
-        $html = html_writer::start_tag('div', array('class' => $columnClass));
+        $html = html_writer::start_tag('div', []);
         $html .= $collapse;
         $html .= html_writer::end_tag('div');
 
@@ -791,13 +792,13 @@ class format_glendon_renderer extends format_section_renderer_base {
         //Get course modules
         $modinfo = get_fast_modinfo($course->id);
         $sections = $this->get_printable_sections($course);
-        $html = '<div class="block format_glendon_menu">' . "\n";
-        $html .= '   <div class="header format_glendon_menu_header">' . "\n";
+        $html = '<div class="block">' . "\n";
+//        $html .= '   <div class="header format_glendon_menu_header">' . "\n";
 //        $html .= '       <div id="course-menu-title"><h3>' . get_string('main_menu', 'format_glendon') . '</h3></div> ' . "\n";
-        $html .= '   </div>' . "\n";
-        $html .= '   <div class="content format_glendon_menu_content">' . "\n";
-        $html .= '      <ul class="format_glendon_ul">' . "\n";
-        $html .= '      <li class="format_glendon_li"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '" ><i class="fa fa-home"></i> ' . get_string('return', 'format_glendon') . '</a></li>' . "\n";
+//        $html .= '   </div>' . "\n";
+        $html .= '   <div class="content">' . "\n";
+        $html .= '      <ul class="list-group">' . "\n";
+        $html .= '      <li class="list-group-item"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '" ><i class="fa fa-home"></i> ' . get_string('return', 'format_glendon') . '</a></li>' . "\n";
         foreach ($sections as $key => $thisSection) {
             $sectionInfo = $modinfo->get_section_info($thisSection);
             if ($displaysection == $thisSection) {
@@ -806,7 +807,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                 $classActive = '';
             }
             if ($thisSection != 0) {
-                $html .= '      <li class="format_glendon_li ' . $classActive . '"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
+                $html .= '      <li class="list-group-item ' . $classActive . '"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
                         . '  title="' . get_section_name($course, $sectionInfo) . '">'
                         . get_section_name($course, $sectionInfo) . '</a></li>';
             }
