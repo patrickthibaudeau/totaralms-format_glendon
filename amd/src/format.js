@@ -25,11 +25,10 @@ define(['jquery', 'jqueryui'], function ($, jqui) {
 
         if (courseMenu.hasClass('active')) {
             $('#format-glendon-content-left').toggle('slide');
-            courseMenu.removeClass('active');            
-            $('#format-glendon-content-right').removeClass('col-md-8');
-            $('#format-glendon-content-right').addClass('col-md-12');
+            courseMenu.removeClass('active'); 
             $('.fa-window-minimize').addClass('fa-window-maximize');
             $('.fa-window-minimize').removeClass('fa-window-minimize');
+            $('#format-glendon-content-right').addClass('col-md-12');
             
             
         } else {
