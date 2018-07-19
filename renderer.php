@@ -571,21 +571,21 @@ class format_glendon_renderer extends format_section_renderer_base {
      */
     protected function print_bootstrap_collapse($sectionName, $summary, $modListing, $collapsed) {
 
-        $in = 'in';
+        $in = 'show in';
         if ($collapsed == 1) {
             $in = '';
         }
 
         $html = '<div id="accordion" role="tablist" aria-multiselectable="true">';
         $html .= '  <div class="card">';
-        $html .= '    <div class="card-header  bg-green" role="tab" id="headingOne">';
+        $html .= '    <div class="card-header  bg-green" id="headingOne">';
         $html .= '      <h5 class="mb-0">';
-        $html .= '        <a data-toggle="collapse" data-parent="#accordion" style="color: #fff;" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
+        $html .= '          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">';
         $html .= '          ' . $sectionName;
-        $html .= '        </a>';
+        $html .= '        </button>';
         $html .= '      </h5>';
         $html .= '    </div>';
-        $html .= '    <div id="collapseOne" class="panel-collapse collapse ' . $in . '" role="tabpanel" aria-labelledby="headingOne">';
+        $html .= '    <div id="collapseOne" class="collapse ' . $in . '" data-parent="#accordion" aria-labelledby="headingOne">';
         $html .= '      <div class="card-block">';
         if (!empty($summary)) {
             $html .= '        <div class="well well-lg">';

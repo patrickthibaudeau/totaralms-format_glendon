@@ -49,19 +49,4 @@ if ($ADMIN->fulltree) {
         0 => get_string('no'),
     );
     $settings->add(new admin_setting_configselect($name, $title, $description, $default, $choices));
-    //Length of default label
-    $name = 'format_glendon/tablabel';
-    $title = get_string('tab_label', 'format_glendon');
-    $description = get_string('tab_label_help', 'format_glendon');
-    $default = 50;
-    $settings->add(new admin_setting_configtext($name, $title, $description, $default));
-    //Cover image
-    $name = 'format_glendon/coverimage';
-    $title = get_string('cover_image', 'format_glendon');
-    $description = get_string('cover_image_help', 'format_glendon');
-    $filearea =  '/format_glendon/';
-    $options = array(
-        'maxfiles' => 1,
-        'accepted_types' => 'jpg,gif,png,svg'
-    );
 }

@@ -1,0 +1,28 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 19-Jul-2018, 4:54:37 AM
+    Author     : patrick
+*/
+
+@media screen and (min-width: 544px) {
+    .card-deck {
+        /*display: flex !important;*/
+        flex: 1 0 0% !important;
+        flex-direction: column !important;
+        /*margin-right: 15px !important;*/
+        margin-bottom: 0 !important;
+        /*margin-left: 15px !important;*/
+    }
+}
+
+.btn-link, .btn-link:focus {
+    color: #fff !important;
+}
+
+.card-body {
+    padding: 10px !important;
+}

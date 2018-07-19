@@ -227,10 +227,7 @@ class format_glendon extends format_base {
         static $courseformatoptions = false;
         $glendoncourseconfig = get_config('format_glendon');
         $context = context_course::instance($COURSE->id);
-        $draftitemid = file_get_submitted_draft_itemid('coverimage');
-        file_prepare_draft_area($draftitemid, $context->id, 'format_glendon', 'coverimage', 1, array('subdirs' => 0, 'maxfiles' => 1));
 
-        $glendoncourseconfig->coverimage = $draftitemid;
         if ($courseformatoptions === false) {
             $courseconfig = get_config('moodlecourse');
             $courseformatoptions = array(
@@ -253,11 +250,7 @@ class format_glendon extends format_base {
                 'collapsed' => array(
                     'default' => $glendoncourseconfig->collapsed,
                     'type' => PARAM_INT,
-                ),
-                'coverimage' => array(
-                    'default' => $glendoncourseconfig->coverimage,
-                    'type' => PARAM_FILE,
-                ),
+                )
             );
         }
         if ($foreditform && !isset($courseformatoptions['numsections']['label'])) {
@@ -325,15 +318,6 @@ class format_glendon extends format_base {
                         )
                     ),
                     'help' => 'collapsed',
-                    'help_component' => 'format_glendon',
-                ),
-                'coverimage' => array(
-                    'label' => new lang_string('cover_image', 'format_glendon'),
-                    'element_type' => 'filemanager',
-                    'element_attributes' => array(
-                        'value' => $glendoncourseconfig->coverimage
-                    ),
-                    'help' => 'cover_image',
                     'help_component' => 'format_glendon',
                 )
             );
@@ -425,9 +409,7 @@ class format_glendon extends format_base {
         }
 
         $context = context_course::instance($COURSE->id);
-        //Cover image
-        file_save_draft_area_files($data['coverimage'], $context->id, 'format_glendon', 'cover_image', 1, array('subdirs' => 0, 'maxfiles' => 1));
-
+   
         return $changed;
     }
     
