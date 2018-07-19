@@ -339,7 +339,7 @@ class format_glendon_renderer extends format_section_renderer_base {
      * @param array $modnamesused (argument not used)
      */
     public function print_course_front_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB;
 
         $modinfo = get_fast_modinfo($course);
         $course = course_get_format($course)->get_course();
@@ -361,26 +361,27 @@ class format_glendon_renderer extends format_section_renderer_base {
         //*********************Print image if there is one **********************
         $out = array();
         $context = context_course::instance($course->id);
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'format_glendon', 'cover_image', 1);
-
-        foreach ($files as $file) {
-            $filename = $file->get_filename();
-            $out[] = '<img class="img-responsive" src="' . $CFG->wwwroot . '/pluginfile.php/' . $file->get_contextid() . '/format_glendon/cover_image/' . $file->get_itemid() . '/' . $filename . '" alt="' . $filename . '">';
+        require_once($CFG->libdir . '/coursecatlib.php');
+        $course = new course_in_list($course);
+        foreach ($course->get_course_overviewfiles() as $file) {
+            $isimage = $file->is_valid_image();
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+                    $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+            if ($isimage) {
+                $image = '<img class="img-fluid" src="' . $url . '" alt="Image ' . $course->fullname . '">';
+                break;
+            }
         }
-        if (isset($out[1])) {
-//            echo $this->print_section_row_start();
-//            echo html_writer::start_tag('div', array('class' => 'col-md-12', 'align' => 'center', 'style' => 'margin-bottom: 5px;'));
+
+        if (isset($image)) {
             echo html_writer::start_tag('div', array('align' => 'center', 'style' => 'margin-bottom: 5px;'));
-            echo $out[1];
+            echo $image;
             echo html_writer::end_tag('div');
-//            echo $this->print_section_row_end();
         }
         //***************** Print section 0 also known as start here ************
 //        echo $this->print_section_row_start();
         echo $this->print_start_here($course);
 //        echo $this->print_section_row_end();
-
         //********************* Print out course sections ***********************
         //Get printable sections
         $printableSections = $this->get_printable_sections($course);
@@ -490,9 +491,9 @@ class format_glendon_renderer extends format_section_renderer_base {
                         $image = '';
                     }
                     $html .= '<div class="card">';
-                    if (isset($result[0])) {  
+                    if (isset($result[0])) {
                         $html .= '          <a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '&section=' . $thisSection . '"'
-                            . '  title="' . get_section_name($course, $sectionInfo) . '">';
+                                . '  title="' . get_section_name($course, $sectionInfo) . '">';
                         $html .= $image;
                         $html .= '</a>';
                     }
@@ -502,17 +503,18 @@ class format_glendon_renderer extends format_section_renderer_base {
                             . '  title="' . get_section_name($course, $sectionInfo) . '">'
                             . get_section_name($course, $sectionInfo) . '</a>';
                     $html .= '      </h5>';
-                    $summary = preg_replace("/<img[^>]+\>/i", "", $summary);;
+                    $summary = preg_replace("/<img[^>]+\>/i", "", $summary);
+                    ;
                     $html .= '<p class="card-text">' . $summary . '</p>';
                     $html .= '  </div>';
-                    
+
                     $html .= '</div>';
                     $thisSection++;
                 }
             }
         }
         $html .= html_writer::end_tag('div');
-        
+
 
 
         return $html;
