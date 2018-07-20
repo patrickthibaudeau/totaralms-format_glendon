@@ -16,11 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'format_glendon', language 'en', branch 'MOODLE_20_STABLE'
- *
- * @package   format_glendon
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
+ * @package format_glendon
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['bootstrap_version'] = 'Version Bootstrap';

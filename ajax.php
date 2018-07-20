@@ -1,4 +1,12 @@
 <?php
+/**
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
+ * @package format_glendon
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 function print_previous_next_buttons() {
     global $CFG, $COURSE, $DB, $PAGE, $USER;

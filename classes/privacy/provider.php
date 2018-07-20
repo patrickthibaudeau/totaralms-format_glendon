@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for block_login.
- *
- * @package    block_login
- * @copyright  2018 Zig Tan <zig@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
+ * @package format_glendon
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace format_glendon\privacy;

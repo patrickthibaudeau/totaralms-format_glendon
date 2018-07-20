@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * glendon course format.  Display the whole course as "glendon" made of modules.
- *
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
  * @package format_glendon
- * @copyright 2006 The Open University
- * @author N.D.Freear@open.ac.uk, and others.
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();

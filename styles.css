@@ -1,3 +1,11 @@
+/**
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
+ * @package format_glendon
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 .course-content ul.glendon {margin:0;}
 .course-content ul.glendon li.section {list-style: none;margin:0 0 5px 0;padding:0;}
 .course-content ul.glendon li.section .content {margin:0 40px;}

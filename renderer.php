@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderer for outputting the glendon course format.
- *
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
  * @package format_glendon
- * @copyright 2012 Dan Poltawski
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.3
  */
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/format/renderer.php');
