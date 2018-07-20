@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains main class for the course format Topic
- *
- * @since     Moodle 2.0
- * @package   format_glendon
- * @copyright 2009 Sam Hemelryk
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Glendon Course Format: Displays course front page in a grid format
+ * and the content in a tabbed format
+ * @package format_glendon
+ * @copyright 2018 Glendon - York University
+ * @author Patrick Thibaudeau
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/course/format/lib.php');
