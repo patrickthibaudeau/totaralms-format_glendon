@@ -25,20 +25,15 @@ define(['jquery', 'jqueryui'], function ($, jqui) {
 
         if (courseMenu.hasClass('active')) {
             $('#format-glendon-content-left').toggle('slide');
-            courseMenu.removeClass('active'); 
-            $('.fa-window-minimize').addClass('fa-window-maximize');
-            $('.fa-window-minimize').removeClass('fa-window-minimize');
+            courseMenu.removeClass('active');
+            $('#course-menu-toogle-image').prop('src', wwwroot + '/pix/t/switch_plus.svg');
             $('#format-glendon-content-right').addClass('col-md-12');
-            
-            
         } else {
             courseMenu.addClass('active');
-            $('.fa-window-maximize').addClass('fa-window-minimize');
-            $('.fa-window-maximize').removeClass('fa-window-maximize');
+            $('#course-menu-toogle-image').prop('src', wwwroot + '/pix/t/switch_minus.svg');
             $('#format-glendon-content-left').toggle('slide');
             $('#format-glendon-content-right').removeClass('col-md-12');
             $('#format-glendon-content-right').addClass('col-md-8');
-            
         }
     }
 

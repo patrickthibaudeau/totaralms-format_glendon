@@ -205,7 +205,7 @@ class format_glendon_renderer extends format_section_renderer_base {
         if (!$thissection->visible) {
             $classes .= ' dimmed_text';
         }
-        $sectiontitle .= '<a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="pull-left active"><i class="fa fa-window-minimize"></i></a>';
+        $sectiontitle .= '<a href="javascript:void(0)" title="' . get_string('toggle_course_menu', 'format_glendon') . '" id="course-menu-toggle" class="pull-left active"><img id="course-menu-toogle-image" src="' . $CFG->wwwroot . '/pix/t/switch_minus.png"></a>';
         $sectiontitle .= get_section_name($course, $displaysection);
 
         $sectiontitle .= html_writer::end_tag('div');
@@ -368,7 +368,7 @@ class format_glendon_renderer extends format_section_renderer_base {
             $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
                     $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
             if ($isimage) {
-                $image = '<img class="img-fluid" src="' . $url . '" alt="Image ' . $course->fullname . '">';
+                $image = '<img class="img-fluid course-front-page" src="' . $url . '" alt="Image ' . $course->fullname . '">';
                 break;
             }
         }
@@ -486,7 +486,7 @@ class format_glendon_renderer extends format_section_renderer_base {
                     $summary = $this->format_summary_text($sectionInfo);
                     preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $summary, $result);
                     if (isset($result[0])) {
-                        $image = $result[0] . ' class="card-image-top"  style="height: 160px; width: 100%; object-fit: cover" alt="Image"/>';
+                        $image = $result[0] . ' class="card-image-top"  style="height: 160px; width: 100%; object-fit: cover;" alt="Image"/>';
                     } else {
                         $image = '';
                     }
@@ -794,11 +794,8 @@ class format_glendon_renderer extends format_section_renderer_base {
         //Get course modules
         $modinfo = get_fast_modinfo($course->id);
         $sections = $this->get_printable_sections($course);
-        $html = '<div class="block">' . "\n";
-//        $html .= '   <div class="header format_glendon_menu_header">' . "\n";
-//        $html .= '       <div id="course-menu-title"><h3>' . get_string('main_menu', 'format_glendon') . '</h3></div> ' . "\n";
-//        $html .= '   </div>' . "\n";
-        $html .= '   <div class="content">' . "\n";
+        $html = '<div >' . "\n";
+        $html .= '   <div >' . "\n";
         $html .= '      <ul class="list-group">' . "\n";
         $html .= '      <li class="list-group-item"><a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '" ><i class="fa fa-home"></i> ' . get_string('return', 'format_glendon') . '</a></li>' . "\n";
         foreach ($sections as $key => $thisSection) {
